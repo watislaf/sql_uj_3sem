@@ -6,7 +6,7 @@ Wymagania
 
 * diagram ER ❌ -> watislaf@gmail.com, https://my.vertabelo.com/drive stworzyc team i dodac do niego wszystkich
 * diagram relacji (schemat bazy danych) ❌ -> a to nie jest to samo co i to poprzednie ??
-* skrypty SQL tworzące wszystkie obiekty bazy danych ❌
+* skrypty SQL tworzące wszystkie obiekty bazy danych ❌ ->
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF. ❌
 
 ### Minimalne wymagania dotyczące bazy danych:
@@ -20,9 +20,7 @@ Wymagania
 * baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
 * baza powinna zawierać tabele realizujące jeden ze schematów dziedziczenia ❌
 * należy zaprojektować strategii pielęgnacji bazy danych (kopie zapasowe) ❌
-* można utworzyć dwa programy klienckie :
-** jeden umożliwiający pracę administratorów ?
-** drugi umożliwiający pracę zwykłych użytkowników. ?
+* można utworzyć dwa programy klienckie : jeden umożliwiający pracę administratorów ?  drugi umożliwiający pracę zwykłych użytkowników. ?
 
 Plik z opisem powinien zawierać:
 ```

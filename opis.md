@@ -1,0 +1,1 @@
+tutaj moze byc nasz opis
