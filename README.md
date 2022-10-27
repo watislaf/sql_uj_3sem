@@ -5,7 +5,7 @@ Wymagania
 ### Kompletny projekt powinien zawierać  (❌/✅)
 
 * diagram ER ❌ -> watislaf@gmail.com, https://my.vertabelo.com/drive stworzyc team i dodac do niego wszystkich
-* diagram relacji (schemat bazy danych) ❌
+* diagram relacji (schemat bazy danych) ❌ -> a to nie jest to samo co i to poprzednie ??
 * skrypty SQL tworzące wszystkie obiekty bazy danych ❌
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF. ❌
 
