@@ -1,6 +1,7 @@
 # sql_uj_3sem
 
-Wymagania
+Baza danych szkoly. Baza powinna przechowywac informacje o przedmiotach, nauczycielach,
+uczniach i ich stopniach oraz klasach i lekcjach.
 
 ### Kompletny projekt powinien zawierać  (❌/✅)
 
@@ -35,28 +36,3 @@ Plik z opisem powinien zawierać:
 * skrypt tworzący bazę danych,
 * typowe zapytania.
 ``` 
-
-
-1. Baza danych przedsi�biorstwa komunikacji miejskiej. Baza powinna przechowywa� informacje o kierowcach, liniach (jakie s� przystanki), autobusach oraz rozk�adzie jazdy.
-
-2. Baza danych szko�y. Baza powinna przechowywa� informacje o przedmiotach, nauczycielach, uczniach i ich stopniach oraz klasach i lekcjach.
-
-3. Baza danych przewodnik�w turystycznych. Powinna ewidencjonowa� sprzeda� bilet�w turystom oraz ��czy� turyst�w w grupy przypisane do przewodnika. Ponadto powinna zbiera� informacje o rozpocz�ciu i zako�czeniu wycieczki oraz wy�wietla� list� wolnych przewodnik�w wraz z ewentualnymi najbli�szymi wolnymi terminami przewodnik�w.
-
-4. Baza danych multikina. Powinna gromadzi� dane o salach kinowych, seansach filmowych, umo�liwia� generowanie raport�w dotycz�cych sprzeda�y bilet�w oraz przychod�w generowanych przez ka�dy film.
-
-5. Baza danych umo�liwiaj�ca przeprowadzanie aukcji internetowych.
-
-6. Baza danych pogotowia ratunkowego. Powinna gromadzi� informacje o karetkach, zespo�ach ratowniczych (kto wchodzi w sk�ad zespo�u), wezwaniach i udzielonej pomocy, a tak�e poniesionych kosztach.
-
-7. Baza danych firmy zajmuj�cej si� po�rednictwem w sprzeda�y nieruchomo�ci. Baza powinna mie� mo�liwo�� wykonywania analiz dochodowo�ci i trend�w w zapotrzebowaniu.
-
-8. Uproszczony system bankowy.
-
-9. Baza danych do z�o�onej gry komputerowej.
-
-10. Baza danych parku wodnego, klubu fitness, SPA. Powinna umo�liwia� sprzeda� r�nego rodzaju bilet�w (jednorazowych, abonamentowych, grupowych), rezerwacje, przydzia� szafek itp.
-
-11. Baza danych serwisu naprawczego (samochody lub sprz�t RTV itp.). Baza powinna umo�liwia� m.in. sprawdzanie stanu naprawy.
-
- 
