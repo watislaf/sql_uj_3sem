@@ -7,13 +7,13 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 
 * diagram ER ❌ -> watislaf@gmail.com, https://my.vertabelo.com/drive stworzyc team i dodac do niego wszystkich
 * diagram relacji (schemat bazy danych) ❌ -> a to nie jest to samo co i to poprzednie ??
-* skrypty SQL tworzące wszystkie obiekty bazy danych ❌ ->
+* skrypty SQL tworzące wszystkie obiekty bazy danych ✅
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF. ❌
 
 ### Minimalne wymagania dotyczące bazy danych:
-1. Osoba1 - 0/8 tabel.
-2. Osoba2 - 0/8 tabel.
-3.  Osoba3 - 0/8 tabel.
+1. Michal - 0/8 tabel.
+2. Marcin - 0/8 tabel.
+3. Vlad - 6/8 tabel.
 * widoków lub funkcji 0/10
 * 0/5 procedur 
 * 0/5 wyzwalaczy
