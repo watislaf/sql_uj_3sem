@@ -12,7 +12,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 
 ### Minimalne wymagania dotyczące bazy danych:
 1. Michal - 0/8 tabel.
-2. Marcin - 0/8 tabel.
+2. Marcin - 4/8 tabel.
 3. Vlad - 6/8 tabel.
 * widoków lub funkcji 0/10
 * 0/5 procedur 
