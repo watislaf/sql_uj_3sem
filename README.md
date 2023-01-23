@@ -11,17 +11,27 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF. ❌
 
 ### Minimalne wymagania dotyczące bazy danych:
-1. Michal - 0/8 tabel.
+1. Michal - 1/8 tabel.
 2. Marcin - 4/8 tabel.
-3. Vlad - 6/8 tabel.
-* widoków lub funkcji 0/10
-* 0/5 procedur 
-* 0/5 wyzwalaczy
+3. Vlad - 8/8 tabel.
+--- 
+1. Michal - 0/4 widoków lub funkcji .
+2. Marcin - 0/3 widoków lub funkcji .
+3. Vlad - 3/3 widoków lub funkcji .
+--- 
+1. Michal - 0/1 procedur.
+2. Marcin - 0/2 procedur.
+3. Vlad - 1/2 procedur.
+--- 
+1. Michal - 0/1 wyzwalaczy.
+2. Marcin - 0/2 wyzwalaczy.
+3. Vlad - 0/2 wyzwalaczy.
+
    
-* baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
-* baza powinna zawierać tabele realizujące jeden ze schematów dziedziczenia ❌
-* należy zaprojektować strategii pielęgnacji bazy danych (kopie zapasowe) ❌
-* można utworzyć dwa programy klienckie : jeden umożliwiający pracę administratorów ?  drugi umożliwiający pracę zwykłych użytkowników. ?
+* Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
+* Marcin - baza powinna zawierać tabele realizujące jeden ze schematów dziedziczenia ❌
+* Michal - należy zaprojektować strategii pielęgnacji bazy danych (kopie zapasowe) ❌
+* Vlad - można utworzyć dwa programy klienckie : jeden umożliwiający pracę administratorów ?  drugi umożliwiający pracę zwykłych użytkowników. ?
 
 Plik z opisem powinien zawierać:
 ```
