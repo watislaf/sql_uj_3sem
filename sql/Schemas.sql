@@ -3,6 +3,7 @@ use sql_uj_3sem;
 
 drop table if exists schedule;
 drop table if exists students_attending_courses;
+drop table if exists amount_of_students_on_the_course;
 drop table if exists courses;
 drop table if exists students;
 drop table if exists teachers;
@@ -15,65 +16,65 @@ drop table if exists classrooms;
 drop table if exists classroom_roles;
 drop table if exists administration_employees;
 
--- Tabela przechowuje informacje o rodzicach uczniow
-CREATE TABLE parents
+-- tabela przechowuje informacje o rodzicach uczniow
+create table parents
 (
-    id                 int         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    name               varchar(32) NOT NULL,
-    surname            varchar(32) NOT NULL,
-    pesel              varchar(11) NOT NULL UNIQUE,
-    CHECK (pesel LIKE '___________'), -- sprawdzenie czy PESEL ma 11 cyfr
+    id                 int         not null primary key auto_increment,
+    name               varchar(32) not null,
+    surname            varchar(32) not null,
+    pesel              varchar(11) not null unique,
+    check (pesel like '___________'), -- sprawdzenie czy pesel ma 11 cyfr
     adress_street      varchar(128),
     adress_city        varchar(128),
     adress_postal_code varchar(6),
-    -- CONSTRAINT good_postal CHECK (adress_postal_code LIKE '[0-9][0-9][-][0-9][0-9][0-9]'),
-    phone_number       varchar(9) UNIQUE
+    -- constraint good_postal check (adress_postal_code like '[0-9][0-9][-][0-9][0-9][0-9]'),
+    phone_number       varchar(9) unique
 );
 
 create table students
 (
-    id               int         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    name             varchar(32) NOT NULL,
-    surname          varchar(32) NOT NULL,
-    pesel            varchar(11) NOT NULL UNIQUE,
-    sex              char        NOT NULL CHECK (sex in ('k', 'm')),
-    birthday         DATE        NOT NULL,
+    id               int         not null primary key auto_increment,
+    name             varchar(32) not null,
+    surname          varchar(32) not null,
+    pesel            varchar(11) not null unique,
+    sex              char        not null check (sex in ('k', 'm')),
+    birthday         date        not null,
 
-    first_parent_id  INT,
-    FOREIGN KEY (first_parent_id) REFERENCES parents (id),
-    second_parent_id INT,
-    FOREIGN KEY (second_parent_id) REFERENCES parents (id),
+    first_parent_id  int,
+    foreign key (first_parent_id) references parents (id),
+    second_parent_id int,
+    foreign key (second_parent_id) references parents (id),
 
-    CONSTRAINT CHECK (pesel LIKE '___________') -- sprawdzenie czy PESEL ma 11 cyfr
-    -- CONSTRAINT CHECK (pesel NOT IN (SELECT parents.pesel FROM parents)) -- sprawdzenie czy dziecko nie ma takiego peselu jak ktorys rodzic
+    constraint check (pesel like '___________') -- sprawdzenie czy pesel ma 11 cyfr
+    -- constraint check (pesel not in (select parents.pesel from parents)) -- sprawdzenie czy dziecko nie ma takiego peselu jak ktorys rodzic
 );
 
 create table teachers
 (
-    id       int         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    name     varchar(32) NOT NULL,
-    surname  varchar(32) NOT NULL,
-    sex      char        NOT NULL CHECK (sex in ('k', 'm')),
-    birthday DATE
+    id       int         not null primary key auto_increment,
+    name     varchar(32) not null,
+    surname  varchar(32) not null,
+    sex      char        not null check (sex in ('k', 'm')),
+    birthday date
 );
 
 -- representacja ogolnego przedmiotu
 create table subjects
 (
-    id          int         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    name        varchar(32) NOT NULL,
+    id          int         not null primary key auto_increment,
+    name        varchar(32) not null,
     description varchar(255)
 );
 
 -- na przyklad jezyk polski z krzystofem k.
 create table courses
 (
-    id         int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    teacher_id int NOT NULL,
-    FOREIGN KEY (teacher_id) REFERENCES teachers (id),
+    id         int not null primary key auto_increment,
+    teacher_id int not null,
+    foreign key (teacher_id) references teachers (id),
 
-    subject_id int NOT NULL,
-    FOREIGN KEY (subject_id) REFERENCES subjects (id)
+    subject_id int not null,
+    foreign key (subject_id) references subjects (id)
 );
 
 
@@ -81,131 +82,160 @@ create table courses
 -- many to many
 create table students_attending_courses
 (
-    id_of_student int NOT NULL,
-    id_of_course  int NOT NULL,
+    id_of_student int not null,
+    id_of_course  int not null,
 
-    PRIMARY KEY (id_of_student, id_of_course),
-    FOREIGN KEY (id_of_student) REFERENCES students (id),
-    FOREIGN KEY (id_of_course) REFERENCES courses (id)
+    primary key (id_of_student, id_of_course),
+    foreign key (id_of_student) references students (id),
+    foreign key (id_of_course) references courses (id)
 );
+
+create table amount_of_students_on_the_course
+(
+    course_id int not null primary key,
+    counter   int not null default 0
+);
+
+create trigger update_students_counter
+    before insert
+    on students_attending_courses
+    for each row
+begin
+    if exists(select * from amount_of_students_on_the_course where course_id = new.id_of_course) then
+        update amount_of_students_on_the_course set counter = counter + 1 where course_id = new.id_of_course;
+    else
+        insert into amount_of_students_on_the_course(course_id, counter) values (new.id_of_course, 1);
+    end if;
+end;
+
+
+create trigger update_students_counter
+    before update
+    on students_attending_courses
+    for each row
+begin
+    if exists(old.id_of_course != new.id_of_course) then
+        update amount_of_students_on_the_course set counter = counter - 1 where course_id = old.id_of_course;
+        update amount_of_students_on_the_course set counter = counter + 1 where course_id = new.id_of_course;
+    end if;
+end;
 
 -- na przyklad (jezyk polski z krzystofem k.) w sali id
 create table schedule
 (
-    id               int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    id_of_course     int NOT NULL REFERENCES courses (id),
-    id_of_courseroom int NOT NULL REFERENCES classrooms (id),
+    id               int not null primary key auto_increment,
+    id_of_course     int not null references courses (id),
+    id_of_courseroom int not null references classrooms (id),
 
-    week_day         int  DEFAULT (0),
-    CHECK ( week_day BETWEEN 0 AND 7),
+    week_day         int  default (0),
+    check ( week_day between 0 and 7),
 
-    start_time       TIME DEFAULT ('12:00:00'),
-    end_time         TIME DEFAULT ('13:00:00'),
-    CHECK ( start_time < end_time )
+    start_time       time default ('12:00:00'),
+    end_time         time default ('13:00:00'),
+    check ( start_time < end_time )
 );
 
--- zajecia same w sobie. Maja pointer na harmonogram w ktorym czasie powinny wystepowac
+-- zajecia same w sobie. maja pointer na harmonogram w ktorym czasie powinny wystepowac
 create table lessons
 (
-    id             int  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    id_of_schedule int  NOT NULL REFERENCES schedule (id),
-    lesson_date    DATE NOT NULL
+    id             int  not null primary key auto_increment,
+    id_of_schedule int  not null references schedule (id),
+    lesson_date    date not null
 );
 
 -- oceny/komentarzy/obecnosc studenta na pewnym zajeciu
 create table student_presence
 (
-    id_of_lesson  int NOT NULL REFERENCES lessons (id),
-    id_of_student int NOT NULL REFERENCES students (id),
-    PRIMARY KEY (id_of_lesson, id_of_student),
-    was_absent    boolean DEFAULT TRUE
+    id_of_lesson  int not null references lessons (id),
+    id_of_student int not null references students (id),
+    primary key (id_of_lesson, id_of_student),
+    was_absent    boolean default true
 );
 
 -- oceny studenta na pewnym zajeciu
 create table student_makrs
 (
-    id            int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    id_of_lesson  int NOT NULL REFERENCES lessons (id), -- na ktorym zajeciu bylo
-    id_of_student int NOT NULL REFERENCES students (id),
+    id            int not null primary key auto_increment,
+    id_of_lesson  int not null references lessons (id), -- na ktorym zajeciu bylo
+    id_of_student int not null references students (id),
     mark          int,
-    CHECK ( mark <= 5 and mark >= 0 )
+    check ( mark <= 5 and mark >= 0 )
 );
 
--- Tabela przechowuje specialne role sal lekcyjnych
-CREATE TABLE classroom_roles
+-- tabela przechowuje specialne role sal lekcyjnych
+create table classroom_roles
 (
-    id          INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id          int not null primary key auto_increment,
     description varchar(128)
 );
 
--- Tabela przechowuje wszelkie dane na temat sal lekcyjnych
-CREATE TABLE classrooms
+-- tabela przechowuje wszelkie dane na temat sal lekcyjnych
+create table classrooms
 (
-    id              INT NOT NULL PRIMARY KEY,                -- jako ID traktuje numer sali ktory widnieje na drzwiach, wiec nie ma AUTO_INCREMENT
-    capacity        TINYINT,                                 -- ile uczniow miesci sie w sali
-    has_projector   TINYINT,                                 -- czy sala ma projektor multimedialny?
-    special_role_id TINYINT REFERENCES classroom_roles (id), -- czy sala jest jakas specialna? np. sala gimnastyczna, informatyczna, chemiczna itd.
-    last_renovation DATE                                     -- data ostatniego remontu
+    id              int not null primary key,                -- jako id traktuje numer sali ktory widnieje na drzwiach, wiec nie ma auto_increment
+    capacity        tinyint,                                 -- ile uczniow miesci sie w sali
+    has_projector   tinyint,                                 -- czy sala ma projektor multimedialny?
+    special_role_id tinyint references classroom_roles (id), -- czy sala jest jakas specialna? np. sala gimnastyczna, informatyczna, chemiczna itd.
+    last_renovation date                                     -- data ostatniego remontu
 );
 
--- Tabela przechowuje informacje o pracownikach takich jak: sprzataczka, wozny, sekretarka itd.
-CREATE TABLE administration_employees
+-- tabela przechowuje informacje o pracownikach takich jak: sprzataczka, wozny, sekretarka itd.
+create table administration_employees
 (
-    id       int         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    name     varchar(32) NOT NULL,
-    surname  varchar(32) NOT NULL,
-    pesel    varchar(11) NOT NULL UNIQUE,
-    sex      char        NOT NULL CHECK (sex in ('k', 'm')),
-    birthday DATE        NOT NULL,
+    id       int         not null primary key auto_increment,
+    name     varchar(32) not null,
+    surname  varchar(32) not null,
+    pesel    varchar(11) not null unique,
+    sex      char        not null check (sex in ('k', 'm')),
+    birthday date        not null,
     role     varchar(128),
-    salary   DECIMAL(10, 2)
+    salary   decimal(10, 2)
 );
 
-/* ------ ------ ------ ------ ------ ------ PROCEDURES */
+/* ------ ------ ------ ------ ------ ------ procedures */
 
-drop procedure if exists getAverageMark;
-create procedure getAverageMark(IN studentId INT, IN subjectId INT)
-BEGIN
-    SELECT AVG(student_makrs.mark)
+drop procedure if exists getaveragemark;
+create procedure getaveragemark(in studentid int, in subjectid int)
+begin
+    select avg(student_makrs.mark)
     from subjects
              inner join courses on subjects.id = courses.subject_id
              inner join schedule on courses.id = schedule.id_of_course
              inner join lessons l on schedule.id = l.id_of_schedule
-             inner join student_makrs on l.id = student_makrs.id_of_lesson and studentId = student_makrs.id_of_student
-    where subjectId = courses.subject_id
+             inner join student_makrs on l.id = student_makrs.id_of_lesson and studentid = student_makrs.id_of_student
+    where subjectid = courses.subject_id
     group by student_makrs.id;
-END;
+end;
 
-/* ------ ------ ------ ------ ------ ------ FUNCTIONS */
-drop function if exists setAbsenceToStudent;
-CREATE FUNCTION setAbsenceToStudent(lessonDate DATE, studentId INT, wasAbsent BOOLEAN)
-    RETURNS BOOLEAN
-    READS SQL DATA
-BEGIN
-    DECLARE onlyOneLessonWasFound BOOLEAN;
-    DECLARE statusNotExists BOOLEAN;
-    DECLARE lessonId INTEGER;
+/* ------ ------ ------ ------ ------ ------ functions */
+drop function if exists setabsencetostudent;
+create function setabsencetostudent(lessondate date, studentid int, wasabsent boolean)
+    returns boolean
+    reads sql data
+begin
+    declare onlyonelessonwasfound boolean;
+    declare statusnotexists boolean;
+    declare lessonid integer;
 
-    SET onlyOneLessonWasFound = (SELECT COUNT(*) = 1
-                                 FROM lessons
-                                 WHERE lesson_date = lessonDate);
+    set onlyonelessonwasfound = (select count(*) = 1
+                                 from lessons
+                                 where lesson_date = lessondate);
 
-    IF not onlyOneLessonWasFound then return onlyOneLessonWasFound ; end if;
+    if not onlyonelessonwasfound then return onlyonelessonwasfound ; end if;
 
-    SET lessonId = (SELECT lessons.id FROM lessons WHERE lesson_date = lessonDate);
-    SET statusNotExists =
-            (SELECT COUNT(*) = 0 FROM student_presence WHERE id_of_lesson = lessonId AND studentId = id_of_student);
+    set lessonid = (select lessons.id from lessons where lesson_date = lessondate);
+    set statusnotexists =
+            (select count(*) = 0 from student_presence where id_of_lesson = lessonid and studentid = id_of_student);
 
 
-    IF statusNotExists then
-        INSERT INTO student_presence(id_of_lesson, id_of_student, was_absent) values (lessonId, studentId, wasAbsent);
-        RETURN 1;
+    if statusnotexists then
+        insert into student_presence(id_of_lesson, id_of_student, was_absent) values (lessonid, studentid, wasabsent);
+        return 1;
     end if;
 
-    UPDATE student_presence
-    SET was_absent = wasAbsent
-    WHERE id_of_lesson = lessonId
-      AND studentId = id_of_student;
-    RETURN 1;
-END;
-
+    update student_presence
+    set was_absent = wasabsent
+    where id_of_lesson = lessonid
+      and studentid = id_of_student;
+    return 1;
+end;

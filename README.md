@@ -11,7 +11,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF. ❌
 
 ### Minimalne wymagania dotyczące bazy danych:
-1. Michal - 1/8 tabel.
+1. Michal - 2/8 tabel.
 2. Marcin - 4/8 tabel.
 3. Vlad - 8/8 tabel.
 --- 
@@ -25,7 +25,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 --- 
 1. Michal - 0/1 wyzwalaczy.
 2. Marcin - 0/2 wyzwalaczy.
-3. Vlad - 0/2 wyzwalaczy.
+3. Vlad - 2/2 wyzwalaczy.
 
    
 * Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌

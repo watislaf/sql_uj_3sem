@@ -1,66 +1,66 @@
 use sql_uj_3sem;
 
-DELETE
-FROM students_attending_courses
-WHERE true;
-DELETE
-FROM courses
-WHERE true;
-DELETE
-FROM schedule
-WHERE true;
-DELETE
-FROM lessons
-WHERE true;
-DELETE
-FROM student_makrs
-WHERE true;
-DELETE
-FROM student_presence
-WHERE true;
-DELETE
-FROM classroom_roles
-WHERE true;
-DELETE
-FROM classrooms
-WHERE true;
-DELETE
-FROM administration_employees
-WHERE true;
-DELETE
-FROM students
-WHERE true;
-DELETE
-FROM parents
+delete
+from students_attending_courses
 where true;
-DELETE
-FROM teachers
-WHERE true;
-DELETE
-FROM subjects
-WHERE true;
-ALTER TABLE administration_employees
-    AUTO_INCREMENT = 1;
-ALTER TABLE classroom_roles
-    AUTO_INCREMENT = 1;
-ALTER TABLE parents
-    AUTO_INCREMENT = 1;
-ALTER TABLE students
-    AUTO_INCREMENT = 1;
-ALTER TABLE teachers
-    AUTO_INCREMENT = 1;
-ALTER TABLE subjects
-    AUTO_INCREMENT = 1;
-ALTER TABLE courses
-    AUTO_INCREMENT = 1;
-ALTER TABLE students_attending_courses
-    AUTO_INCREMENT = 1;
-ALTER TABLE schedule
-    AUTO_INCREMENT = 1;
-ALTER TABLE lessons
-    AUTO_INCREMENT = 1;
-ALTER TABLE student_makrs
-    AUTO_INCREMENT = 1;
+delete
+from courses
+where true;
+delete
+from schedule
+where true;
+delete
+from lessons
+where true;
+delete
+from student_makrs
+where true;
+delete
+from student_presence
+where true;
+delete
+from classroom_roles
+where true;
+delete
+from classrooms
+where true;
+delete
+from administration_employees
+where true;
+delete
+from students
+where true;
+delete
+from parents
+where true;
+delete
+from teachers
+where true;
+delete
+from subjects
+where true;
+alter table administration_employees
+    auto_increment = 1;
+alter table classroom_roles
+    auto_increment = 1;
+alter table parents
+    auto_increment = 1;
+alter table students
+    auto_increment = 1;
+alter table teachers
+    auto_increment = 1;
+alter table subjects
+    auto_increment = 1;
+alter table courses
+    auto_increment = 1;
+alter table students_attending_courses
+    auto_increment = 1;
+alter table schedule
+    auto_increment = 1;
+alter table lessons
+    auto_increment = 1;
+alter table student_makrs
+    auto_increment = 1;
 
 INSERT INTO parents (name, surname, pesel, adress_street, adress_city, adress_postal_code, phone_number)
 VALUES ('Krzysztof', 'Kowalski', '75201568431', 'ul. Polska 3', 'Krakow', '12-345', '123456789'),
@@ -75,11 +75,11 @@ values ('Pola', 'Kowalska', '05697865458', 'k', '2005-03-01', 1, 2),
 
 
 insert into teachers(name, surname, sex)
-values ('Bob', 'Borsucz', 'm');
+values ('bob', 'borsucz', 'm');
 
 insert into subjects(name)
-values ('Matematyka'),
-       ('Fizyka');
+values ('matematyka'),
+       ('fizyka');
 
 insert into courses( teacher_id, subject_id)
 values ( 1, 1),
@@ -114,20 +114,20 @@ insert into student_makrs( id_of_lesson, id_of_student, mark)
 insert into student_presence(id_of_lesson, id_of_student, was_absent)
     value (1, 2, true);
 
-INSERT INTO classroom_roles ( description)
-VALUES ('brak specialnej roli'),
+insert into classroom_roles ( description)
+values ('brak specialnej roli'),
        ( 'sala gimnastyczna'),
        ( 'pracownia informatyczna'),
        ( 'pracownia chemiczna'),
        ( 'pracownia fizyczna');
 
-INSERT INTO classrooms (id, capacity, has_projector, special_role_id, last_renovation)
-VALUES (27, 30, 1, 3, '2018-08-01'),
+insert into classrooms (id, capacity, has_projector, special_role_id, last_renovation)
+values (27, 30, 1, 3, '2018-08-01'),
        (108, 100, 0, 1, '2010-04-01'),
        (50, 35, 0, 5, '2005-01-01');
 
-INSERT INTO administration_employees (name, surname, pesel, sex, birthday, role, salary)
-VALUES ('Maria', 'Milkowska', '91220147192', 'k', '1991-02-11', 'pracownica sekretariatu', 4050.00),
+insert into administration_employees (name, surname, pesel, sex, birthday, role, salary)
+values ('Maria', 'Milkowska', '91220147192', 'k', '1991-02-11', 'pracownica sekretariatu', 4050.00),
        ('Zygmunt', 'Czyscioch', '70173016310', 'm', '1970-12-22', 'wozny', 2700.00),
        ('Aneta', 'Brudna', '80205639163', 'k', '1980-10-12', 'sprzatakacza', 2700.00);
 
