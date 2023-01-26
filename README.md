@@ -23,9 +23,9 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 2. Marcin - 0/2 procedur.
 3. Vlad - 1/2 procedur.
 --- 
-1. Michal - 0/1 wyzwalaczy.
-2. Marcin - 0/2 wyzwalaczy.
-3. Vlad - 2/2 wyzwalaczy.
+1. Michal - 0/1 tabeli z wyzwalaczem.
+2. Marcin - 0/2 tabeli z wyzwalaczem.
+3. Vlad - 1/2 tabeli z wyzwalaczem.
 
    
 * Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
