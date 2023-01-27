@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const SIZE_OF_GRID = 800;
 
 const getColums = (data: any) => {
@@ -27,3 +29,15 @@ const getColums = (data: any) => {
 }
 
 export default getColums;
+export const fetchData = (url: string, setData: (data: any) => void, onFetched: () => void) => {
+    axios
+        .get('http://localhost:3000/' + url)
+        .then((res) => {
+            setData(res.data);
+            onFetched();
+        })
+        .catch((err) => {
+            console.log(err);
+            onFetched();
+        });
+}

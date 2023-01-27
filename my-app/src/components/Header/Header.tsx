@@ -10,7 +10,7 @@ import {Link} from "react-router-dom";
 
 const headersData = [
     {label: "Home", href: "/"},
-    {label: "Function Menu", href: "/menu"},
+    {label: "Menu", href: "/menu"},
     {label: "Students", href: "/select/students"},
     {label: "Teachers", href: "/select/teachers"},
     {label: "Subjects", href: "/select/subjects"},
