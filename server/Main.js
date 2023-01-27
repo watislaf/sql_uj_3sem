@@ -82,10 +82,12 @@ const runFunction = (fooType, fooName, arg1, arg2, arg3, arg4, arg5) => {
 }
 
 
-
 const getTable = (tableTame) => {
-    return new Promise((resolve) => {
-        pool.query(" select * from sql_uj_3sem." + tableTame, (err, res) => {
+    return new Promise((resolve) => { // students; DROP TABLE STUDENTS
+        const query = " select * from sql_uj_3sem." + tableTame;
+        console.log(tableTame)
+        console.log(query)
+        pool.query(query, (err, res) => {
             resolve(res);
         });
     });

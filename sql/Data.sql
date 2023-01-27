@@ -81,45 +81,45 @@ insert into subjects(name)
 values ('matematyka'),
        ('fizyka');
 
-insert into courses( teacher_id, subject_id)
-values ( 1, 1),
-       ( 1, 2),
-       ( 1, 2);
+insert into courses(teacher_id, subject_id)
+values (1, 1),
+       (1, 2),
+       (1, 2);
 insert into students_attending_courses(id_of_student, id_of_course)
 values (1, 1),
        (1, 2),
        (2, 1);
 
-insert into schedule( id_of_course, week_day, start_time, end_time, id_of_courseroom)
+insert into schedule(id_of_course, week_day, start_time, end_time, id_of_courseroom)
 values (1, 2, '12:00:00', '13:00:00', 27),
-       ( 1, 3, '14:00:00', '15:00:00', 108),
-       ( 2, 6, '15:00:00', '18:00:00', 50);
+       (1, 3, '14:00:00', '15:00:00', 108),
+       (2, 6, '15:00:00', '18:00:00', 50);
 
 
-insert into lessons( id_of_schedule, lesson_date)
-values ( 3, '2012-12-2'),
-       ( 1, '2012-12-5'),
-       ( 1, '2012-12-7'),
-       ( 2, '2012-12-4');
+insert into lessons(id_of_schedule, lesson_date)
+values (3, '2012-12-2'),
+       (1, '2012-12-5'),
+       (1, '2012-12-7'),
+       (2, '2012-12-4');
 
-insert into student_makrs( id_of_lesson, id_of_student, mark)
+insert into student_makrs(id_of_lesson, id_of_student, mark)
     value (1, 1, 4),
-    ( 2, 2, 3),
-    ( 1, 1, 4),
-    ( 2, 2, 3),
-    ( 4, 2, 5),
-    ( 4, 1, 2);
+    (2, 2, 3),
+    (1, 1, 4),
+    (2, 2, 3),
+    (4, 2, 5),
+    (4, 1, 2);
 
 
 insert into student_presence(id_of_lesson, id_of_student, was_absent)
     value (1, 2, true);
 
-insert into classroom_roles ( description)
+insert into classroom_roles (description)
 values ('brak specialnej roli'),
-       ( 'sala gimnastyczna'),
-       ( 'pracownia informatyczna'),
-       ( 'pracownia chemiczna'),
-       ( 'pracownia fizyczna');
+       ('sala gimnastyczna'),
+       ('pracownia informatyczna'),
+       ('pracownia chemiczna'),
+       ('pracownia fizyczna');
 
 insert into classrooms (id, capacity, has_projector, special_role_id, last_renovation)
 values (27, 30, 1, 3, '2018-08-01'),
