@@ -52,7 +52,7 @@ export const generateFunctionPath = (functions: any[], functionName: string, fun
 
 export const fetchData = (url: string, setData: (data: any) => void, onFetched: () => void) => {
     axios
-        .get('http://localhost:3000/' + url)
+        .get('http://34.125.149.136/' + url)
         .then((res) => {
             setData(res.data);
             onFetched();
