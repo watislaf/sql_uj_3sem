@@ -2,16 +2,16 @@ create database if not exists sql_uj_3sem;
 use sql_uj_3sem;
 
 delimiter //
-drop table if exists schedule;
 drop table if exists students_attending_courses;
 drop table if exists amount_of_students_on_the_course;
+drop table if exists student_makrs;
+drop table if exists student_presence;
+drop table if exists lessons;
+drop table if exists schedule;
 drop table if exists courses;
 drop table if exists students;
 drop table if exists teachers;
 drop table if exists subjects;
-drop table if exists lessons;
-drop table if exists student_makrs;
-drop table if exists student_presence;
 drop table if exists parents;
 drop table if exists classrooms;
 drop table if exists classroom_roles;
@@ -21,6 +21,7 @@ drop trigger if exists update_students_counter;
 drop trigger if exists insert_students_counter;
 
 drop procedure if exists get_average_mark;
+drop procedure if exists get_students_of_teacher;
 
 drop function if exists set_absence_to_student;
 
@@ -100,7 +101,8 @@ create table students_attending_courses
 create table amount_of_students_on_the_course
 (
     course_id int not null primary key,
-    counter   int not null default 0
+    counter   int not null default 0,
+    foreign key (course_id) references courses (id)
 );
 
 create trigger insert_students_counter
@@ -113,10 +115,7 @@ begin
     else
         insert into amount_of_students_on_the_course(course_id, counter) values (new.id_of_course, 1);
     end if;
-end;
-//
-
-
+end //
 
 create trigger update_students_counter
     before update
@@ -127,50 +126,7 @@ begin
         update amount_of_students_on_the_course set counter = counter - 1 where course_id = old.id_of_course;
         update amount_of_students_on_the_course set counter = counter + 1 where course_id = new.id_of_course;
     end if;
-end;
-//
-
--- na przyklad (jezyk polski z krzystofem k.) w sali id
-create table schedule
-(
-    id               int not null primary key auto_increment,
-    id_of_course     int not null references courses (id),
-    id_of_courseroom int not null references classrooms (id),
-
-    week_day         int  default (0),
-    check ( week_day between 0 and 7),
-
-    start_time       time default ('12:00:00'),
-    end_time         time default ('13:00:00'),
-    check ( start_time < end_time )
-);
-
--- zajecia same w sobie. maja pointer na harmonogram w ktorym czasie powinny wystepowac
-create table lessons
-(
-    id             int  not null primary key auto_increment,
-    id_of_schedule int  not null references schedule (id),
-    lesson_date    date not null
-);
-
--- oceny/komentarzy/obecnosc studenta na pewnym zajeciu
-create table student_presence
-(
-    id_of_lesson  int not null references lessons (id),
-    id_of_student int not null references students (id),
-    primary key (id_of_lesson, id_of_student),
-    was_absent    boolean default true
-);
-
--- oceny studenta na pewnym zajeciu
-create table student_makrs
-(
-    id            int not null primary key auto_increment,
-    id_of_lesson  int not null references lessons (id), -- na ktorym zajeciu bylo
-    id_of_student int not null references students (id),
-    mark          int,
-    check ( mark <= 5 and mark >= 0 )
-);
+end //
 
 -- tabela przechowuje specialne role sal lekcyjnych
 create table classroom_roles
@@ -182,12 +138,69 @@ create table classroom_roles
 -- tabela przechowuje wszelkie dane na temat sal lekcyjnych
 create table classrooms
 (
-    id              int not null primary key,                -- jako id traktuje numer sali ktory widnieje na drzwiach, wiec nie ma auto_increment
-    capacity        tinyint,                                 -- ile uczniow miesci sie w sali
-    has_projector   tinyint,                                 -- czy sala ma projektor multimedialny?
-    special_role_id tinyint references classroom_roles (id), -- czy sala jest jakas specialna? np. sala gimnastyczna, informatyczna, chemiczna itd.
-    last_renovation date                                     -- data ostatniego remontu
+    id              int not null primary key, -- jako id traktuje numer sali ktory widnieje na drzwiach, wiec nie ma auto_increment
+    capacity        int,                      -- ile uczniow miesci sie w sali
+    has_projector   boolean,                  -- czy sala ma projektor multimedialny?
+    special_role_id int,
+    foreign key (special_role_id) references classroom_roles (id),
+
+    last_renovation date                      -- data ostatniego remontu
 );
+
+-- na przyklad (jezyk polski z krzystofem k.) w sali id
+create table schedule
+(
+    id              int not null primary key auto_increment,
+    id_of_course    int not null,
+    foreign key (id_of_course) references courses (id),
+
+    id_of_classroom int not null,
+    foreign key (id_of_classroom) references classrooms (id),
+
+
+    week_day        int  default (0),
+    check ( week_day between 0 and 7),
+
+    start_time      time default ('12:00:00'),
+    end_time        time default ('13:00:00'),
+    check ( start_time < end_time )
+);
+
+-- zajecia same w sobie. maja pointer na harmonogram w ktorym czasie powinny wystepowac
+create table lessons
+(
+    id             int  not null primary key auto_increment,
+    id_of_schedule int  not null,
+    foreign key (id_of_schedule) references schedule (id),
+
+    lesson_date    date not null
+);
+
+-- oceny/komentarzy/obecnosc studenta na pewnym zajeciu
+create table student_presence
+(
+    id_of_lesson  int not null,
+    foreign key (id_of_lesson) references lessons (id),
+    id_of_student int not null,
+    foreign key (id_of_student) references students (id),
+    primary key (id_of_lesson, id_of_student),
+    was_absent    boolean default true
+);
+
+-- oceny studenta na pewnym zajeciu
+create table student_makrs
+(
+    id            int not null primary key auto_increment,
+    id_of_lesson  int not null ,
+    foreign key (id_of_lesson) references lessons (id),
+
+    id_of_student int not null ,
+    foreign key (id_of_student) references students (id),
+
+    mark          int,
+    check ( mark <= 5 and mark >= 0 )
+);
+
 
 -- tabela przechowuje informacje o pracownikach takich jak: sprzataczka, wozny, sekretarka itd.
 create table administration_employees
@@ -203,20 +216,28 @@ create table administration_employees
 );
 
 /* ------ ------ ------ ------ ------ ------ procedures */
-create procedure get_average_mark(in studentid int, in subjectid int)
+create procedure get_average_mark(in studentId int, in subjectId int)
 begin
     select avg(student_makrs.mark)
     from subjects
              inner join courses on subjects.id = courses.subject_id
              inner join schedule on courses.id = schedule.id_of_course
              inner join lessons l on schedule.id = l.id_of_schedule
-             inner join student_makrs on l.id = student_makrs.id_of_lesson and studentid = student_makrs.id_of_student
-    where subjectid = courses.subject_id
-    group by subjectid;
-end;
+             inner join student_makrs on l.id = student_makrs.id_of_lesson and studentId = student_makrs.id_of_student
+    where subjectId = courses.subject_id
+    group by subjectId;
+end //
+
+create procedure get_students_of_teacher(in teacherId int)
+begin
+    select students.*
+    from students
+             left join students_attending_courses on students.id = students_attending_courses.id_of_student
+    where id_of_course in (select id from courses where courses.teacher_id = teacherId);
+end //
 
 /* ------ ------ ------ ------ ------ ------ functions */
-create function set_absence_to_student(lessonDate date, studentid int, wasabsent boolean)
+create function set_absence_to_student(lessonDate date, studentId int, wasabsent boolean)
     returns varchar(100)
     reads sql data
 begin
@@ -230,17 +251,16 @@ begin
 
     set lessonId = (select lessons.id from lessons where lesson_date = lessonDate limit 1);
     set statusNotExists =
-            (select count(*) = 0 from student_presence where id_of_lesson = lessonId and studentid = id_of_student);
+            (select count(*) = 0 from student_presence where id_of_lesson = lessonId and studentId = id_of_student);
 
     if statusNotExists then
-        insert into student_presence(id_of_lesson, id_of_student, was_absent) values (lessonId, studentid, wasabsent);
+        insert into student_presence(id_of_lesson, id_of_student, was_absent) values (lessonId, studentId, wasabsent);
         return 'Entry was created';
     end if;
 
     update student_presence
     set was_absent = wasabsent
     where id_of_lesson = lessonId
-      and studentid = id_of_student;
+      and studentId = id_of_student;
     return 'Entry was updated';
-end;
-//
+end //

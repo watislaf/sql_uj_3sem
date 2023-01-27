@@ -85,12 +85,13 @@ insert into courses(teacher_id, subject_id)
 values (1, 1),
        (1, 2),
        (1, 2);
+
 insert into students_attending_courses(id_of_student, id_of_course)
 values (1, 1),
        (1, 2),
        (2, 1);
 
-insert into schedule(id_of_course, week_day, start_time, end_time, id_of_courseroom)
+insert into schedule(id_of_course, week_day, start_time, end_time, id_of_classroom)
 values (1, 2, '12:00:00', '13:00:00', 27),
        (1, 3, '14:00:00', '15:00:00', 108),
        (2, 6, '15:00:00', '18:00:00', 50);

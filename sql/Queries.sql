@@ -4,13 +4,13 @@ drop view if exists journal;
 
 -- podac liste studentow i ich harmonogram
 create view timetable as
-select s.name, s.surname, s2.name as subject_name, s3.id_of_courseroom, cr.description, s3.week_day
+select s.name, s.surname, s2.name as subject_name, s3.id_of_classroom, cr.description, s3.week_day
 from students_attending_courses
          inner join students s on students_attending_courses.id_of_student = s.id
          inner join courses c on students_attending_courses.id_of_course = c.id
          inner join subjects s2 on c.subject_id = s2.id
          inner join schedule s3 on students_attending_courses.id_of_course = s3.id_of_course
-         inner join classrooms c3 on s3.id_of_courseroom = c3.id
+         inner join classrooms c3 on s3.id_of_classroom = c3.id
          inner join classroom_roles cr on cr.id = c3.special_role_id;
 select *
 from timetable;
@@ -29,6 +29,8 @@ from lessons
 
 -- wypisuje srednia ocene dla studenta x i przedmiota y
 call get_average_mark(1, 1);
+
+call get_students_of_teacher(1);
 
 -- ustawia obecnosc studentowi w pewien dzien
 select set_absence_to_student('2012-12-05', 1, 1);
