@@ -95,10 +95,6 @@ const getTable = (tableTame) => {
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'))
-});
-
 app.get('/files/README', async (req, res) => {
     await new Promise(resolve => setTimeout(resolve, SERVER_LATENCY));
     res.sendFile(path.join(__dirname, 'public', 'README.md'))
@@ -158,6 +154,10 @@ app.get('/api/run/', async (req, res) => {
 
     console.log(result)
     res.end(JSON.stringify(result))
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'))
 });
 
 app.listen(3000);
