@@ -19,6 +19,10 @@ drop table if exists administration_employees;
 drop trigger if exists update_students_counter;
 drop trigger if exists insert_students_counter;
 
+drop procedure if exists get_average_mark;
+
+drop function if exists set_absence_to_student;
+
 -- tabela przechowuje informacje o rodzicach uczniow
 create table parents
 (
@@ -195,9 +199,7 @@ create table administration_employees
 );
 
 /* ------ ------ ------ ------ ------ ------ procedures */
-
-drop procedure if exists getAverageMark;
-create procedure getAverageMark(in studentid int, in subjectid int)
+create procedure get_average_mark(in studentid int, in subjectid int)
 begin
     select avg(student_makrs.mark)
     from subjects
@@ -206,38 +208,34 @@ begin
              inner join lessons l on schedule.id = l.id_of_schedule
              inner join student_makrs on l.id = student_makrs.id_of_lesson and studentid = student_makrs.id_of_student
     where subjectid = courses.subject_id
-    group by student_makrs.id;
+    group by subjectid;
 end;
 
 /* ------ ------ ------ ------ ------ ------ functions */
-drop function if exists setAbsenceToStudent;
-create function setAbsenceToStudent(lessonDate date, studentid int, wasabsent boolean)
-    returns boolean
+create function set_absence_to_student(lessonDate date, studentid int, wasabsent boolean)
+    returns varchar(100)
     reads sql data
 begin
-    declare onlyOneLessonWasFound boolean;
+    declare foundLessons boolean;
     declare statusNotExists boolean;
     declare lessonId integer;
 
-    set onlyOneLessonWasFound = (select count(*) = 1
-                                 from lessons
-                                 where lesson_date = lessonDate);
+    set foundLessons = EXISTS(select * from lessons where lesson_date = lessonDate);
 
-    if not onlyOneLessonWasFound then return onlyOneLessonWasFound ; end if;
+    if (not foundLessons) then return 'cannot find lessons at this day' ; end if;
 
-    set lessonId = (select lessons.id from lessons where lesson_date = lessonDate);
+    set lessonId = (select lessons.id from lessons where lesson_date = lessonDate limit 1);
     set statusNotExists =
             (select count(*) = 0 from student_presence where id_of_lesson = lessonId and studentid = id_of_student);
 
-
     if statusNotExists then
         insert into student_presence(id_of_lesson, id_of_student, was_absent) values (lessonId, studentid, wasabsent);
-        return 1;
+        return 'Entry was created';
     end if;
 
     update student_presence
     set was_absent = wasabsent
     where id_of_lesson = lessonId
       and studentid = id_of_student;
-    return 1;
-end;
+    return 'Entry was updated';
+end ;

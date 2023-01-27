@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
         maxWidth: 700,
         margin: 'auto',
         minHeight: 'calc(100vh - 64px)',
-        background: 'azure',
+        backgroundImage: "linear-gradient(to right, rgb(255 241 237 / 90%), rgb(252 245 227))",
         padding: 20,
         overflow:'scroll'
     },

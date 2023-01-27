@@ -26,13 +26,9 @@ from lessons
          left join student_presence sp on (sac.id_of_student = sp.id_of_student and sp.id_of_lesson = lessons.id)
          inner join students s2 on sac.id_of_student = s2.id
          left join student_makrs sm on sm.id_of_lesson = lessons.id and sm.id_of_student = s2.id;
-select *
-from journal;
 
-SELECT *
-FROM amount_of_students_on_the_course;
 -- wypisuje srednia ocene dla studenta x i przedmiota y
-call getAverageMark(1, 1);
+call get_average_mark(1, 1);
 
 -- ustawia obecnosc studentowi w pewien dzien
-select setAbsenceToStudent('2012-12-05', 1, true);
+select set_absence_to_student('2012-12-05', 1, 1);

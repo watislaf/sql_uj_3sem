@@ -31,7 +31,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
 * Marcin - baza powinna zawierać tabele realizujące jeden ze schematów dziedziczenia ❌
 * Michal - należy zaprojektować strategii pielęgnacji bazy danych (kopie zapasowe) ❌
-* Vlad - można utworzyć dwa programy klienckie : jeden umożliwiający pracę administratorów ?  drugi umożliwiający pracę zwykłych użytkowników. ?
+* Vlad - UI ✅
 
 Plik z opisem powinien zawierać:
 ```

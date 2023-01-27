@@ -1,12 +1,12 @@
 import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {DataGrid} from '@mui/x-data-grid'
-import getColums, {fetchData} from "../../common/utils/Utils";
+import {getColums, fetchData, addIdIfNotExists} from "../../common/utils/Utils";
 import {Box} from "@mui/material";
 import {makeStyles, Typography} from "@material-ui/core";
 
 type UrlProps = {
-    id: string
+    databaseName: string
 }
 
 type Props = {
@@ -14,26 +14,32 @@ type Props = {
 }
 
 const Select = ({setLoading}: Props) => {
-    const {id} = useParams<UrlProps>();
+    const {databaseName} = useParams<UrlProps>();
     const [data, setData] = useState(null);
     const {header} = useStyles();
 
     useEffect(() => {
         setLoading(true);
-        fetchData('api/select/?databaseName=' + id, setData,
-            () => setLoading(false));
-    }, [id])
+        fetchData('api/select/?databaseName=' + databaseName, setData,
+            () => {
+                setTimeout(() => {
+                    window.scrollTo({left: 0, top: 0, behavior: 'smooth'})
+                }, 300);
+                setLoading(false)
+            });
+
+    }, [databaseName])
 
     if (!data) return <></>;
 
     return <div>
         <Typography variant="h4" component="h2" className={header}>
-            Select from table
+            Select from table {databaseName}
         </Typography>
-        <Box sx={{height: 400, width: '100%'}}>
+        <Box sx={{height: '100vh', width: '100%'}}>
             <DataGrid
-                rows={data}
-                columns={getColums(data)}
+                rows={addIdIfNotExists(data)}
+                columns={getColums(addIdIfNotExists(data))}
                 pageSize={10}
                 rowsPerPageOptions={[10]}
             />

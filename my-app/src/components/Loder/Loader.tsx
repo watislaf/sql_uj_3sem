@@ -14,6 +14,7 @@ const useStyle = makeStyles({
         width: "100%",
         height: "100%",
         position: "absolute",
+        zIndex: 3,
     }
 })
 const Loader = () => {

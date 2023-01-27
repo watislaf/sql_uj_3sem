@@ -130,4 +130,3 @@ insert into administration_employees (name, surname, pesel, sex, birthday, role,
 values ('Maria', 'Milkowska', '91220147192', 'k', '1991-02-11', 'pracownica sekretariatu', 4050.00),
        ('Zygmunt', 'Czyscioch', '70173016310', 'm', '1970-12-22', 'wozny', 2700.00),
        ('Aneta', 'Brudna', '80205639163', 'k', '1980-10-12', 'sprzatakacza', 2700.00);
-

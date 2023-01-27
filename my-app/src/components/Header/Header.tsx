@@ -18,11 +18,11 @@ const headersData = [
 ];
 
 const useStyles = makeStyles(() => ({
-    blankSpace:{
+    blankSpace: {
         height: 64,
     },
     header: {
-        backgroundColor: "#000000",
+        backgroundImage: "linear-gradient(to right, rgb(77 68 55), rgb(0 0 0))",
     },
     logo: {
         fontFamily: "Work Sans, sans-serif",
