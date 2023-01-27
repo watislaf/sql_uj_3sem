@@ -16,6 +16,9 @@ drop table if exists classrooms;
 drop table if exists classroom_roles;
 drop table if exists administration_employees;
 
+drop trigger if exists update_students_counter;
+drop trigger if exists insert_students_counter;
+
 -- tabela przechowuje informacje o rodzicach uczniow
 create table parents
 (
@@ -77,7 +80,6 @@ create table courses
     foreign key (subject_id) references subjects (id)
 );
 
-
 -- pokazuje ktory student chodzi do jakiej grupy
 -- many to many
 create table students_attending_courses
@@ -96,7 +98,7 @@ create table amount_of_students_on_the_course
     counter   int not null default 0
 );
 
-create trigger update_students_counter
+create trigger insert_students_counter
     before insert
     on students_attending_courses
     for each row
@@ -114,7 +116,7 @@ create trigger update_students_counter
     on students_attending_courses
     for each row
 begin
-    if exists(old.id_of_course != new.id_of_course) then
+    if old.id_of_course != new.id_of_course then
         update amount_of_students_on_the_course set counter = counter - 1 where course_id = old.id_of_course;
         update amount_of_students_on_the_course set counter = counter + 1 where course_id = new.id_of_course;
     end if;
@@ -194,8 +196,8 @@ create table administration_employees
 
 /* ------ ------ ------ ------ ------ ------ procedures */
 
-drop procedure if exists getaveragemark;
-create procedure getaveragemark(in studentid int, in subjectid int)
+drop procedure if exists getAverageMark;
+create procedure getAverageMark(in studentid int, in subjectid int)
 begin
     select avg(student_makrs.mark)
     from subjects
@@ -208,34 +210,34 @@ begin
 end;
 
 /* ------ ------ ------ ------ ------ ------ functions */
-drop function if exists setabsencetostudent;
-create function setabsencetostudent(lessondate date, studentid int, wasabsent boolean)
+drop function if exists setAbsenceToStudent;
+create function setAbsenceToStudent(lessonDate date, studentid int, wasabsent boolean)
     returns boolean
     reads sql data
 begin
-    declare onlyonelessonwasfound boolean;
-    declare statusnotexists boolean;
-    declare lessonid integer;
+    declare onlyOneLessonWasFound boolean;
+    declare statusNotExists boolean;
+    declare lessonId integer;
 
-    set onlyonelessonwasfound = (select count(*) = 1
+    set onlyOneLessonWasFound = (select count(*) = 1
                                  from lessons
-                                 where lesson_date = lessondate);
+                                 where lesson_date = lessonDate);
 
-    if not onlyonelessonwasfound then return onlyonelessonwasfound ; end if;
+    if not onlyOneLessonWasFound then return onlyOneLessonWasFound ; end if;
 
-    set lessonid = (select lessons.id from lessons where lesson_date = lessondate);
-    set statusnotexists =
-            (select count(*) = 0 from student_presence where id_of_lesson = lessonid and studentid = id_of_student);
+    set lessonId = (select lessons.id from lessons where lesson_date = lessonDate);
+    set statusNotExists =
+            (select count(*) = 0 from student_presence where id_of_lesson = lessonId and studentid = id_of_student);
 
 
-    if statusnotexists then
-        insert into student_presence(id_of_lesson, id_of_student, was_absent) values (lessonid, studentid, wasabsent);
+    if statusNotExists then
+        insert into student_presence(id_of_lesson, id_of_student, was_absent) values (lessonId, studentid, wasabsent);
         return 1;
     end if;
 
     update student_presence
     set was_absent = wasabsent
-    where id_of_lesson = lessonid
+    where id_of_lesson = lessonId
       and studentid = id_of_student;
     return 1;
 end;
