@@ -1,6 +1,7 @@
 create database if not exists sql_uj_3sem;
 use sql_uj_3sem;
 
+delimiter //
 drop table if exists schedule;
 drop table if exists students_attending_courses;
 drop table if exists amount_of_students_on_the_course;
@@ -113,6 +114,8 @@ begin
         insert into amount_of_students_on_the_course(course_id, counter) values (new.id_of_course, 1);
     end if;
 end;
+//
+
 
 
 create trigger update_students_counter
@@ -125,6 +128,7 @@ begin
         update amount_of_students_on_the_course set counter = counter + 1 where course_id = new.id_of_course;
     end if;
 end;
+//
 
 -- na przyklad (jezyk polski z krzystofem k.) w sali id
 create table schedule
@@ -238,4 +242,5 @@ begin
     where id_of_lesson = lessonId
       and studentid = id_of_student;
     return 'Entry was updated';
-end ;
+end;
+//
