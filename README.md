@@ -1,31 +1,32 @@
 # sql_uj_3sem
 
+## Zadanie
+
 Baza danych szkoly. Baza powinna przechowywac informacje o przedmiotach, nauczycielach,
 uczniach i ich stopniach oraz klasach i lekcjach.
 
 ### Kompletny projekt powinien zawierać  (❌/✅)
 
-* diagram ER ❌ -> watislaf@gmail.com, https://my.vertabelo.com/drive stworzyc team i dodac do niego wszystkich
-* diagram relacji (schemat bazy danych) ❌ -> a to nie jest to samo co i to poprzednie ??
+* diagram relacji (schemat bazy danych) ✅
 * skrypty SQL tworzące wszystkie obiekty bazy danych ✅
-* słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF. ❌
+* słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF (opis.md). ❌
 
 ### Minimalne wymagania dotyczące bazy danych:
 1. Michal - 2/8 tabel.
 2. Marcin - 4/8 tabel.
-3. Vlad - 8/8 tabel.
+3. Vlad - 8/8 tabel ✅.
 --- 
 1. Michal - 0/4 widoków lub funkcji .
 2. Marcin - 0/3 widoków lub funkcji .
-3. Vlad - 3/3 widoków lub funkcji .
+3. Vlad - 3/3 widoków lub funkcji ✅.
 --- 
 1. Michal - 0/1 procedur.
 2. Marcin - 0/2 procedur.
-3. Vlad - 2/2 procedur.
+3. Vlad - 2/2 procedur ✅.
 --- 
 1. Michal - 0/1 wyzwalaczy.
 2. Marcin - 0/2 wyzwalaczy.
-3. Vlad - 2/2  wyzwalaczy.
+3. Vlad - 2/2  wyzwalaczy ✅.
 
    
 *???? Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
