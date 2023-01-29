@@ -30,7 +30,7 @@ drop procedure if exists get_students_of_teacher;
 drop procedure if exists class_timetable;
 
 drop function if exists set_absence_to_student;
-drop function  if exists week_day;
+drop function if exists week_day;
 
 create table people(
     id               int         primary key auto_increment,
@@ -228,7 +228,7 @@ create table course_marks_categories(
         check (weight >= 0),
     foreign key (course_id) references courses(id)
 );
--- oceny studenta na pewnym zajeciu
+-- oceny studenta na pewnych zajeciach
 create table student_marks(
     id            int not null primary key auto_increment,
     mark_category  int not null ,
@@ -327,7 +327,14 @@ begin
     end loop;
 
     close cur;
-    select result/weight_count as srednia;
+    if weight_count = 0 then
+        select concat('Uczen nie ma zadnych ocen z przedmiotu ', s.name) as srednia
+            from courses c
+            join subjects s on s.id = c.subject_id = s.id
+            where c.id = courseId;
+    else
+        select result/weight_count as srednia;
+    end if;
 end;
 
 create procedure get_students_of_teacher(in teacherId int)
@@ -381,6 +388,46 @@ begin
         when 7 then return 'niedziela';
     end case;
 end //
+
+drop procedure if exists get_parents_contact_info;
+
+-- Procedura wyswietla informacje kontaktowe rodzicow ucznia
+create procedure get_parents_contact_info (studentid int)
+begin
+    if studentid in (select id from students) then
+        drop table if exists temp;
+        create table temp(
+            Name varchar(32),
+            Surname varchar(32),
+            Adress varchar(256),
+            Phone varchar(9)
+        );
+
+        if (select first_parent_id from students where students.id = studentid) is not null then
+            insert into temp (name, surname, adress, phone)
+            select p.name, p.surname, concat(par.adress_street, ', ', par.adress_postal_code, ' ', par.adress_city), par.phone_number
+            from students s
+            join people p on p.id = s.first_parent_id
+            join parents par on p.id = par.id
+            where s.id = studentid;
+        end if;
+
+        if (select second_parent_id from students where students.id = studentid) is not null then
+            insert into temp (name, surname, adress, phone)
+            select p.name, p.surname, concat(par.adress_street, ', ', par.adress_postal_code, ' ', par.adress_city), par.phone_number
+            from students s
+            join people p on p.id = s.second_parent_id
+            join parents par on p.id = par.id
+            where s.id = studentid;
+        end if;
+
+        select * from temp;
+
+        drop table temp;
+    else
+        select 'Uczen o zadanym ID nie istnieje' as result;
+    end if;
+end;
 
 -- Procedura wyswietla plan lekcji dla zadanej klasy
 create procedure class_timetable (year int, symbol char)

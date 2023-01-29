@@ -29,9 +29,11 @@ from students_timetable;
 #          left join student_makrs sm on sm.id_of_lesson = lessons.id and sm.id_of_student = s2.id;
 
 -- wypisuje srednia ocene dla studenta x i przedmiotu y
-call get_average_mark(6, 1);
+call get_average_mark(13, 1);
 
 call get_students_of_teacher(8);
 
+call get_parents_contact_info(6);
+
 -- ustawia obecnosc studentowi w pewien dzien
--- select set_absence_to_student('2012-12-05', 1, 1);
+ select set_absence_to_student('2012-12-05', 6, 1);
