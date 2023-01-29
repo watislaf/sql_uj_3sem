@@ -1,4 +1,8 @@
 # sql_uj_3sem
+## WIP/uwagi (Marcin):
+1. Tabela candidates nie jest skonczona
+2. widok Journal nie dziala, trzeba pomyslec czy na pewno chcemy taki widok w naszej bazie
+3. tabela amount_of_students_on_the_course i odpowiadajace jej triggery sa wykomentowane, bo wg mnie to jest strasznie na sile zrobione i Byrskiemu sie to nie spodoba
 
 ## Zadanie
 
@@ -12,24 +16,24 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF (opis.md). ❌
 
 ### Minimalne wymagania dotyczące bazy danych:
-#### 18/24 tabele
+#### 19/24 tabele
 
-1. Michal - 2/8 tabel.
-2. Marcin - 8/8 tabel ✅.
-3. Vlad - 8/8 tabel ✅.
+1. Michal - 3/8 tabel
+2. Marcin - 8/8 tabel ✅
+3. Vlad - 8/8 tabel ✅
 --- 
 
-1. Michal - 0/4 widoków lub funkcji .
-2. Marcin - 0/3 widoków lub funkcji .
-3. Vlad - 3/3 widoków lub funkcji ✅.
+1. Michal - 0/4 widoków lub funkcji
+2. Marcin - 0/3 widoków lub funkcji
+3. Vlad - 3/3 widoków lub funkcji ✅
 --- 
 1. Michal - 0/1 procedur.
-2. Marcin - 2/2 procedur ✅.
-3. Vlad - 2/2 procedur ✅.
+2. Marcin - 2/2 procedur ✅
+3. Vlad - 2/2 procedur ✅
 --- 
 1. Michal - 0/1 wyzwalaczy.
-2. Marcin - 2/2 wyzwalaczy ✅.
-3. Vlad - 2/2  wyzwalaczy ❌ (zmienimy to, ten wyzwalacz jest strasznie na sile zrobiony).
+2. Marcin - 2/2 wyzwalaczy ✅
+3. Vlad - 2/2  wyzwalaczy ❌ (zmienimy to, te wyzwalacze sa strasznie na sile zrobione)
 
    
 *???? Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌

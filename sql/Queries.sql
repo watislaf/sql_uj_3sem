@@ -35,5 +35,7 @@ call get_students_of_teacher(8);
 
 call get_parents_contact_info(6);
 
+call class_timetable(1, 'a');
+
 -- ustawia obecnosc studentowi w pewien dzien
  select set_absence_to_student('2012-12-05', 6, 1);

@@ -15,6 +15,7 @@ drop table if exists class_courses;
 drop table if exists courses;
 drop table if exists subjects;
 drop table if exists classroom_roles;
+drop table if exists candidates;
 drop table if exists students;
 drop table if exists class;
 drop table if exists teachers;
@@ -22,12 +23,14 @@ drop table if exists parents;
 drop table if exists people;
 
 drop trigger if exists insert_class_courses;
+drop trigger if exists insert_students;
 drop trigger if exists update_students_counter;
 drop trigger if exists insert_students_counter;
 
 drop procedure if exists get_average_mark;
 drop procedure if exists get_students_of_teacher;
 drop procedure if exists class_timetable;
+drop procedure if exists get_parents_contact_info;
 
 drop function if exists set_absence_to_student;
 drop function if exists week_day;
@@ -77,15 +80,24 @@ create table class(
 );
 
 create table students(
-    id               int         not null primary key,
-    first_parent_id  int,
-    second_parent_id int,
-    class_year int not null,
-    class_symbol char not null,
+    id                  int     not null primary key,
+    first_parent_id     int,
+    second_parent_id    int,
+    class_year          int     not null,
+    class_symbol        char    not null,
 
-    foreign key (class_year, class_symbol) references class(year, symbol),
-    foreign key (first_parent_id) references parents (id),
-    foreign key (second_parent_id) references parents (id),
+    foreign key (class_year, class_symbol)  references  class(year, symbol),
+    foreign key (first_parent_id)           references  parents (id),
+    foreign key (second_parent_id)          references  parents (id),
+    foreign key (id)                        references  people(id)
+);
+
+create table candidates(
+    id      int         not null primary key,
+    pl_exam_result int default 0,
+    math_exam_result int default 0,
+    science_exam_result int default 0,
+    extracurlicural_act int default 0,
     foreign key (id) references people(id)
 );
 
@@ -134,6 +146,7 @@ create table students_attending_courses
     foreign key (id_of_student) references students (id),
     foreign key (id_of_course) references courses (id)
 );
+
 
 # create table amount_of_students_on_the_course
 # (
@@ -388,8 +401,6 @@ begin
         when 7 then return 'niedziela';
     end case;
 end //
-
-drop procedure if exists get_parents_contact_info;
 
 -- Procedura wyswietla informacje kontaktowe rodzicow ucznia
 create procedure get_parents_contact_info (studentid int)
