@@ -34,4 +34,4 @@ call get_average_mark(6, 1);
 call get_students_of_teacher(8);
 
 -- ustawia obecnosc studentowi w pewien dzien
-select set_absence_to_student('2012-12-05', 1, 1);
+-- select set_absence_to_student('2012-12-05', 1, 1);

@@ -28,7 +28,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 3. Vlad - 2/2 procedur ✅.
 --- 
 1. Michal - 0/1 wyzwalaczy.
-2. Marcin - 0/2 wyzwalaczy.
+2. Marcin - 2/2 wyzwalaczy ✅.
 3. Vlad - 2/2  wyzwalaczy ❌ (zmienimy to, ten wyzwalacz jest strasznie na sile zrobiony).
 
    

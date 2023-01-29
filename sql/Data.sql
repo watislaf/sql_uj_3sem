@@ -96,11 +96,6 @@ values (1, 'a', 1),
        (1, 'a', 2),
        (1, 'b', 3);
 
-insert into students_attending_courses(id_of_student, id_of_course)
-values (6, 1),
-       (6, 2),
-       (7, 3);
-
 insert into classrooms (id, capacity, has_projector, special_role_id, last_renovation)
 values (27, 30, 1, 3, '2018-08-01'),
        (108, 100, 0, 1, '2010-04-01'),
@@ -142,3 +137,9 @@ insert into administration_employees (id, adress_street, adress_city, adress_pos
 values (10, 'ul. Katalonska 6', 'Warszawa', '33-333', '987654321', 'pracowniczka sekretariatu', 4050.00),
        (11, 'ul. Katalonska 6', 'Warszawa', '33-333', '987654621', 'wozny', 2700.00),
        (12, 'ul. Katalonska 6', 'Warszawa', '33-333', '986654321', 'sprzatakacza', 2700.00);
+
+insert into people (name, surname, pesel, sex, birthday)
+values ('Marek', 'Ryba', '02738123481', 'm', '2002-06-25');
+
+insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
+values (13, null, null, 1, 'a');

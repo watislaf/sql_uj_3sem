@@ -21,6 +21,7 @@ drop table if exists teachers;
 drop table if exists parents;
 drop table if exists people;
 
+drop trigger if exists insert_class_courses;
 drop trigger if exists update_students_counter;
 drop trigger if exists insert_students_counter;
 
@@ -240,7 +241,6 @@ create table student_marks(
     check ( mark <= 6 and mark >= 0 )
 );
 
-
 -- tabela przechowuje informacje o pracownikach takich jak: sprzataczka, wozny, sekretarka itd.
 create table administration_employees(
     id       int       not null primary key,
@@ -253,6 +253,55 @@ create table administration_employees(
 
     foreign key (id) references people(id)
 );
+
+-- po dopisaniu kursu do danej klasy, automatycznie zapisujemy cala klase na ten kurs
+create trigger insert_class_courses
+    after insert
+    on class_courses
+    for each row
+begin
+    declare done int default false;
+    declare temp_id int default 0;
+    declare cur cursor for
+        (select id from students s where s.class_year = new.class_year and s.class_symbol = new.class_symbol);
+    declare continue handler for not found set done = true;
+
+    open cur;
+    read_loop: loop
+        fetch cur into temp_id;
+        if done then
+            leave read_loop;
+        end if;
+
+        insert into students_attending_courses
+            values (temp_id, new.course_id);
+    end loop;
+end //
+
+-- po dopisaniu studenta do klasy, zapisujemy go na wszystkie kursy dla tej klasy
+create trigger insert_students
+    after insert
+    on students
+    for each row
+begin
+    declare done int default false;
+    declare temp_id int default 0;
+    declare cur cursor for
+        (select cc.course_id from class_courses cc where cc.class_year = new.class_year and cc.class_symbol = new.class_symbol);
+    declare continue handler for not found set done = true;
+
+    open cur;
+    read_loop: loop
+        fetch cur into temp_id;
+        if done then
+            leave read_loop;
+        end if;
+
+        insert into students_attending_courses (id_of_student, id_of_course)
+            values (new.id, temp_id);
+    end loop;
+end //
+
 DELIMITER //
 /* ------ ------ ------ ------ ------ ------ procedures */
 create procedure get_average_mark(in studentId int, in courseId int)
