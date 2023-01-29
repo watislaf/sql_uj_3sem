@@ -34,6 +34,7 @@ drop procedure if exists get_parents_contact_info;
 
 drop function if exists set_absence_to_student;
 drop function if exists week_day;
+drop function if exists candidates_pts;
 
 create table people(
     id               int         primary key auto_increment,
@@ -53,6 +54,7 @@ create table parents(
     adress_postal_code varchar(6),
     -- constraint good_postal check (adress_postal_code like '[0-9][0-9][-][0-9][0-9][0-9]'),
     phone_number       varchar(9) unique,
+    email              varchar(64),
 
     foreign key (id) references people(id)
 );
@@ -64,6 +66,7 @@ create table teachers(
     adress_postal_code varchar(6),
     -- constraint good_postal check (adress_postal_code like '[0-9][0-9][-][0-9][0-9][0-9]'),
     phone_number       varchar(9) unique,
+    email              varchar(64),
     salary             decimal(10, 2),
 
     foreign key (id) references people(id)
@@ -71,7 +74,7 @@ create table teachers(
 
 create table class(
     year                int     not null
-        check (year between 1 and 4),
+        check (year between 0 and 4),
     symbol              char    not null,
     admin_teacher_id    int     not null,
     foreign key (admin_teacher_id) references teachers(id),
@@ -94,10 +97,15 @@ create table students(
 
 create table candidates(
     id      int         not null primary key,
-    pl_exam_result int default 0,
+    pl_exam_result int default 0, -- procentowy wynik egzaminu z polskiego
     math_exam_result int default 0,
     science_exam_result int default 0,
-    extracurlicural_act int default 0,
+    extracurlicural_act int default false, -- czy ma jakies pozaszkolne aktywnosci - wolontariat na przyklad
+    choosed_class_symbol char default null,
+
+    check (pl_exam_result between 0 and 100),
+    check (math_exam_result between 0 and 100),
+    check (extracurlicural_act between 0 and 100),
     foreign key (id) references people(id)
 );
 
@@ -136,9 +144,7 @@ create table class_courses(
 );
 
 -- pokazuje ktory student chodzi do jakiej grupy
--- many to many
-create table students_attending_courses
-(
+create table students_attending_courses(
     id_of_student int not null,
     id_of_course  int not null,
 
@@ -400,6 +406,12 @@ begin
         when 6 then return 'sobota';
         when 7 then return 'niedziela';
     end case;
+end //
+
+create function candidates_pts (can_id int)
+    returns int deterministic
+begin
+    return (select c.pl_exam_result * 0.3 + c.math_exam_result * 0.3 + c.science_exam_result * 0.3 + c.extracurlicural_act * 10 from candidates c where c.id = can_id);
 end //
 
 -- Procedura wyswietla informacje kontaktowe rodzicow ucznia

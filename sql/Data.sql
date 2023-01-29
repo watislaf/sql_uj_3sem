@@ -69,7 +69,8 @@ values (8, 'ul. Lipska 68', 'Warszawa', '33-333', '987966991', 6300.00),
 
 insert into class (year, symbol, admin_teacher_id)
 values (1, 'a', 8),
-       (1, 'b', 9);
+       (1, 'b', 9),
+       (0, 'a', 8);
 
 insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
 values (6, 1, 2, 1, 'a'),
@@ -136,10 +137,18 @@ values (1, 7, false),
 insert into administration_employees (id, adress_street, adress_city, adress_postal_code, phone_number, role, salary)
 values (10, 'ul. Katalonska 6', 'Warszawa', '33-333', '987654321', 'pracowniczka sekretariatu', 4050.00),
        (11, 'ul. Katalonska 6', 'Warszawa', '33-333', '987654621', 'wozny', 2700.00),
-       (12, 'ul. Katalonska 6', 'Warszawa', '33-333', '986654321', 'sprzatakacza', 2700.00);
+       (12, 'ul. Katalonska 6', 'Warszawa', '33-333', '986654321', 'sprzataczka', 2700.00);
 
 insert into people (name, surname, pesel, sex, birthday)
-values ('Marek', 'Ryba', '02738123481', 'm', '2002-06-25');
+values ('Marek', 'Ryba', '02738123481', 'm', '2002-06-25'),
+       ('Anna', 'Kandydacka', '02759823481', 'k', '2002-08-10'),
+       ('Marcin', 'Sredni-Kandydat', '02738893481', 'm', '2002-06-25'),
+       ('Maciej', 'Geniusz', '02738698481', 'm', '2002-09-25');
 
 insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
 values (13, null, null, 1, 'a');
+
+insert into candidates (id, pl_exam_result, math_exam_result, science_exam_result, extracurlicural_act, submitted_certificate)
+values  (14, 55, 12, 91, true, false),
+        (15, 10, 2, 0, false, false),
+        (16, 100, 90, 85, false, true);

@@ -1,5 +1,6 @@
 use sql_uj_3sem;
 drop view if exists students_timetable;
+drop view if exists candidates_stats;
 drop view if exists journal;
 
 create view students_timetable as
@@ -13,8 +14,14 @@ create view students_timetable as
     join lessons_schedule ls on t.id_lessons_schedules=ls.id
     order by p.id;
 
-select *
-from students_timetable;
+-- Wyswietla liste kandydatow z obliczonymi punktami do rekrutacji do szkoly oraz decyzją - czy mają ich dość by się dostać
+create view candidates_stats as
+    select p.name, p.surname, candidates_pts(c.id) as points, if(candidates_pts(c.id) >= 50, 'Approved', 'Not approved') as Decision
+    from people p
+    join candidates c on p.id = c.id
+    order by points desc;
+
+select * from candidates_stats;
 
 # -- wypisuje wszystkie zajecia z ocenami i obecnosciami
 # create view journal as
