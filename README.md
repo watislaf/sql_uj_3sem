@@ -12,10 +12,13 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF (opis.md). ❌
 
 ### Minimalne wymagania dotyczące bazy danych:
-1. Michal - 2/8 tabel.
-2. Marcin - 4/8 tabel.
+    17/24 tabele
+
+1. Michal - 1/8 tabel.
+2. Marcin - 8/8 tabel ✅.
 3. Vlad - 8/8 tabel ✅.
 --- 
+
 1. Michal - 0/4 widoków lub funkcji .
 2. Marcin - 0/3 widoków lub funkcji .
 3. Vlad - 3/3 widoków lub funkcji ✅.
@@ -26,11 +29,11 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 --- 
 1. Michal - 0/1 wyzwalaczy.
 2. Marcin - 0/2 wyzwalaczy.
-3. Vlad - 2/2  wyzwalaczy ✅.
+3. Vlad - 2/2  wyzwalaczy ❌ (zmienimy to, ten wyzwalacz jest strasznie na sile zrobiony).
 
    
 *???? Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
-* Marcin - baza powinna zawierać tabele realizujące jeden ze schematów dziedziczenia ❌
+* Marcin - baza powinna zawierać tabele realizujące jeden ze schematów dziedziczenia ✅
 * Michal - należy zaprojektować strategii pielęgnacji bazy danych (kopie zapasowe) ❌
 * Vlad - UI ✅
 
