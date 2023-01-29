@@ -31,10 +31,12 @@ drop procedure if exists get_average_mark;
 drop procedure if exists get_students_of_teacher;
 drop procedure if exists class_timetable;
 drop procedure if exists get_parents_contact_info;
+drop procedure if exists propose_new_classes;
 
 drop function if exists set_absence_to_student;
 drop function if exists week_day;
 drop function if exists candidates_pts;
+drop function if exists candidate_in_top6;
 
 create table people(
     id               int         primary key auto_increment,
@@ -77,6 +79,8 @@ create table class(
         check (year between 0 and 4),
     symbol              char    not null,
     admin_teacher_id    int     not null,
+    specialization      char    not null,
+    check (specialization in ('p', 'm', 's')), -- profil klasy p - polski, m - matematyka, s - science/biol-chem
     foreign key (admin_teacher_id) references teachers(id),
 
     primary key (year, symbol)
@@ -102,6 +106,7 @@ create table candidates(
     science_exam_result int default 0,
     extracurlicural_act int default false, -- czy ma jakies pozaszkolne aktywnosci - wolontariat na przyklad
     choosed_class_symbol char default null,
+    filling_date datetime,
 
     check (pl_exam_result between 0 and 100),
     check (math_exam_result between 0 and 100),
@@ -409,7 +414,7 @@ begin
 end //
 
 create function candidates_pts (can_id int)
-    returns int deterministic
+    returns decimal(5,2) deterministic
 begin
     return (select c.pl_exam_result * 0.3 + c.math_exam_result * 0.3 + c.science_exam_result * 0.3 + c.extracurlicural_act * 10 from candidates c where c.id = can_id);
 end //
@@ -467,4 +472,41 @@ begin
     else
         select 'Podana klasa nie istnieje';
     end if;
+end //
+
+create function candidate_in_top6 (can_id int)
+    returns int deterministic
+begin
+    declare 6th_id int default (select c1.id from candidates c1 order by candidates_pts(c1.id) desc, c1.filling_date asc limit 5,1);
+    declare 6th_score int default (candidates_pts(6th_id));
+    declare score int default (select candidates_pts(can_id));
+    declare date datetime default (select filling_date from candidates where candidates.id = can_id);
+    if score > 6th_score then
+        return true;
+    else
+        if score = 6th_score and date <= (select filling_date from candidates where id = 6th_id) then
+            return true;
+        else
+            return false;
+        end if;
+    end if;
+end //
+
+create procedure propose_new_classes ()
+begin
+    drop table if exists temp;
+    create table temp(
+        id int,
+        pl_exam_result int,
+        math_exam_result int,
+        science_exam_result int,
+        extracurlicural_act int,
+        choosed_class_symbol char,
+        filling_date datetime
+    );
+
+    insert into temp
+        select * from candidates c order by candidates_pts(c.id) desc, c.filling_date asc limit 6;
+
+
 end //

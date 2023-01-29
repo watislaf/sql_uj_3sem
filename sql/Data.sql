@@ -67,10 +67,11 @@ insert into teachers (id, adress_street, adress_city, adress_postal_code, phone_
 values (8, 'ul. Lipska 68', 'Warszawa', '33-333', '987966991', 6300.00),
        (9, 'ul. Mazowiecka 68', 'Warszawa', '33-333', '987968991', 5800.00);
 
-insert into class (year, symbol, admin_teacher_id)
-values (1, 'a', 8),
-       (1, 'b', 9),
-       (0, 'a', 8);
+insert into class (year, symbol, admin_teacher_id, specialization)
+values (1, 'a', 8, 'm'),
+       (1, 'b', 9, 's'),
+       (0, 'a', 8, 'm'),
+       (0, 'b', 9, 's');
 
 insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
 values (6, 1, 2, 1, 'a'),
@@ -143,12 +144,22 @@ insert into people (name, surname, pesel, sex, birthday)
 values ('Marek', 'Ryba', '02738123481', 'm', '2002-06-25'),
        ('Anna', 'Kandydacka', '02759823481', 'k', '2002-08-10'),
        ('Marcin', 'Sredni-Kandydat', '02738893481', 'm', '2002-06-25'),
-       ('Maciej', 'Geniusz', '02738698481', 'm', '2002-09-25');
+       ('Maciej', 'Geniusz', '02738698481', 'm', '2002-09-25'),
+       ('Mikolaj', 'Matejko', '02738698621', 'm', '2002-09-25'), -- 17
+       ('Joanna', 'Paczesniak', '02739108481', 'k', '2002-09-25'),
+       ('Lukasz', 'Mickiewicz', '02738646881', 'm', '2002-09-25'),
+       ('Marzena', 'Nowicka', '02908698481', 'k', '2002-09-25'),
+       ('Jakub', 'Iwanecki', '02738698881', 'm', '2002-09-25');
 
 insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
 values (13, null, null, 1, 'a');
 
-insert into candidates (id, pl_exam_result, math_exam_result, science_exam_result, extracurlicural_act, submitted_certificate)
-values  (14, 55, 12, 91, true, false),
-        (15, 10, 2, 0, false, false),
-        (16, 100, 90, 85, false, true);
+insert into candidates (id, pl_exam_result, math_exam_result, science_exam_result, extracurlicural_act, choosed_class_symbol, filling_date)
+values  (14, 81, 9, 57, true, 's', '2022-08-01'),
+        (15, 10, 2, 0, false, 's', '2022-08-02'),
+        (16, 100, 90, 85, false, 'm', '2022-08-02'),
+        (17, 81, 9, 57, true, 'p', '2022-08-02'),
+        (18, 70, 100, 70, false, 'm', '2022-08-02'),
+        (19, 60, 60, 60, true, 'm', '2022-08-02'),
+        (20, 10, 70, 90, true, 's', '2022-08-02'),
+        (21, 60, 50, 90, false, 's', '2022-08-02');

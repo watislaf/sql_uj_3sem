@@ -1,8 +1,8 @@
 # sql_uj_3sem
 ## WIP/uwagi (Marcin):
-1. widok Journal nie dziala, trzeba pomyslec czy na pewno chcemy taki widok w naszej bazie
-2. tabela amount_of_students_on_the_course i odpowiadajace jej triggery sa wykomentowane, bo wg mnie to jest strasznie na sile zrobione i Byrskiemu sie to nie spodoba
-
+1. widok *Journal* nie dziala, trzeba pomyslec czy na pewno chcemy taki widok w naszej bazie
+2. tabela *amount_of_students_on_the_course* i odpowiadajace jej triggery sa wykomentowane, bo wg mnie to jest strasznie na sile zrobione i Byrskiemu sie to nie spodoba
+3. proceutra *propose_new_classes* jest wip
 ## Zadanie
 
 Baza danych szkoly. Baza powinna przechowywac informacje o przedmiotach, nauczycielach,
