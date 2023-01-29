@@ -9,6 +9,7 @@ delete from timetable where true;
 delete from lessons_schedule where true;
 delete from classrooms where true;
 delete from students_attending_courses where true;
+delete from class_courses where true;
 delete from courses where true;
 delete from subjects where true;
 delete from classroom_roles where true;
@@ -89,6 +90,11 @@ insert into courses(teacher_id, subject_id)
 values (8, 1),
        (8, 2),
        (9, 2);
+
+insert into class_courses (class_year, class_symbol, course_id)
+values (1, 'a', 1),
+       (1, 'a', 2),
+       (1, 'b', 3);
 
 insert into students_attending_courses(id_of_student, id_of_course)
 values (6, 1),

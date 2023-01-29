@@ -11,6 +11,7 @@ drop table if exists timetable;
 drop table if exists lessons_schedule;
 drop table if exists classrooms;
 drop table if exists students_attending_courses;
+drop table if exists class_courses;
 drop table if exists courses;
 drop table if exists subjects;
 drop table if exists classroom_roles;
@@ -25,6 +26,7 @@ drop trigger if exists insert_students_counter;
 
 drop procedure if exists get_average_mark;
 drop procedure if exists get_students_of_teacher;
+drop procedure if exists class_timetable;
 
 drop function if exists set_absence_to_student;
 drop function  if exists week_day;
@@ -111,6 +113,15 @@ create table courses(
     foreign key (subject_id) references subjects (id)
 );
 
+create table class_courses(
+    class_year int not null,
+    class_symbol char not null,
+    foreign key (class_year, class_symbol) references class(year, symbol),
+    course_id int not null,
+    foreign key (course_id) references courses(id),
+    primary key (class_year, class_symbol, course_id)
+);
+
 -- pokazuje ktory student chodzi do jakiej grupy
 -- many to many
 create table students_attending_courses
@@ -184,6 +195,7 @@ create table timetable(
     id_of_course    int not null,
     id_of_classroom int not null,
 
+    foreign key (id_lessons_schedules) references lessons_schedule(id),
     foreign key (id_of_course) references courses (id),
     foreign key (id_of_classroom) references classrooms (id)
 );
@@ -306,6 +318,7 @@ begin
     return 'Entry was updated';
 end //
 
+-- Funckja zwraca nazwe dnia tygodnia ktora jest zadana liczba 1-7
 create function week_day (day int)
     returns varchar(32) deterministic
 begin
@@ -318,4 +331,21 @@ begin
         when 6 then return 'sobota';
         when 7 then return 'niedziela';
     end case;
+end //
+
+-- Procedura wyswietla plan lekcji dla zadanej klasy
+create procedure class_timetable (year int, symbol char)
+begin
+    if (year, symbol) in (select c.year, c.symbol from class c) then
+        select week_day(ls.week_day), ls.lesson_num, ls.start_time, ls.end_time, s.name, t.id_of_classroom, p.name, p.surname
+        from class_courses cc
+        join courses c on cc.course_id = c.id
+        join subjects s on c.subject_id = s.id
+        join timetable t on c.id = t.id_of_course
+        join lessons_schedule ls on t.id_lessons_schedules = ls.id
+        join people p on c.teacher_id = p.id
+        where cc.class_year = year and cc.class_symbol = symbol;
+    else
+        select 'Podana klasa nie istnieje';
+    end if;
 end //

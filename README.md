@@ -12,9 +12,9 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF (opis.md). ❌
 
 ### Minimalne wymagania dotyczące bazy danych:
-    17/24 tabele
+    18/24 tabele
 
-1. Michal - 1/8 tabel.
+1. Michal - 2/8 tabel.
 2. Marcin - 8/8 tabel ✅.
 3. Vlad - 8/8 tabel ✅.
 --- 
@@ -24,7 +24,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 3. Vlad - 3/3 widoków lub funkcji ✅.
 --- 
 1. Michal - 0/1 procedur.
-2. Marcin - 0/2 procedur.
+2. Marcin - 1/2 procedur.
 3. Vlad - 2/2 procedur ✅.
 --- 
 1. Michal - 0/1 wyzwalaczy.
@@ -42,7 +42,7 @@ Plik z opisem powinien zawierać:
 * podstawowe założenia projektu (cel, główne założenia, możliwości, ograniczenia przyjęte przy projektowaniu),
 * diagram ER,
 * schemat bazy danych (diagram relacji),
-* dodatkowe wi�zy integralności danych (nie zapisane w schemacie),
+* dodatkowe wiezy integralności danych (nie zapisane w schemacie),
 * utworzone indeksy,
 * opis stworzonych widoków,
 * opis procedur składowanych,
