@@ -32,6 +32,7 @@ drop procedure if exists get_students_of_teacher;
 drop procedure if exists class_timetable;
 drop procedure if exists get_parents_contact_info;
 drop procedure if exists propose_new_classes;
+drop procedure if exists show_class;
 
 drop function if exists set_absence_to_student;
 drop function if exists week_day;
@@ -540,7 +541,6 @@ begin
     declare i int default 0;
     declare temp_id int default 0;
     declare temp_choosed_class char;
-    -- declare qry varchar(256) default 'select * from temp where id = ?';
 
     drop table if exists temp;
     create table temp(
@@ -588,19 +588,35 @@ begin
         set i = i + 1;
     end while;
 
+    drop table temp;
 
-#     set @qry = 'select * from temp limit ?, 1';
-#
-#     set @i = 0;
-#     while @i < n do
-#         prepare stm from @qry;
-#         execute stm using @i;
-#         deallocate prepare stm;
-#         set @i = @i + 1;
-#     end while;
-
+    select 'Klasa A' as ID, concat('Specializacja: ', (select specialization from class where year = 0 and symbol = 'a')) as Name, concat('Wychowawaca: ', (select p.name from class c join people p on c.admin_teacher_id = p.id where c.year = 0 and c.symbol = 'a'), ' ', (select p.surname from class c join people p on c.admin_teacher_id = p.id where c.year = 0 and c.symbol = 'a')) as Surname
+    union
+    select p.id, p.name, p.surname
+    from students s
+    join people p on s.id = p.id
+    where s.class_year = 0 and s.class_symbol = 'a'
+    union
+    select 'Klasa B' as ID, concat('Specializacja: ', (select specialization from class where year = 0 and symbol = 'b')) as Name, concat('Wychowawaca: ', (select p.name from class c join people p on c.admin_teacher_id = p.id where c.year = 0 and c.symbol = 'b'), ' ', (select p.surname from class c join people p on c.admin_teacher_id = p.id where c.year = 0 and c.symbol = 'b')) as Surname
+    union
+    select p.id, p.name, p.surname
+    from students s
+    join people p on s.id = p.id
+    where s.class_year = 0 and s.class_symbol = 'b'
+    union
+    select 'Klasa C' as ID, concat('Specializacja: ', (select specialization from class where year = 0 and symbol = 'c')) as Name, concat('Wychowawaca: ', (select p.name from class c join people p on c.admin_teacher_id = p.id where c.year = 0 and c.symbol = 'c'), ' ', (select p.surname from class c join people p on c.admin_teacher_id = p.id where c.year = 0 and c.symbol = 'c')) as Surname
+    union
+    select p.id, p.name, p.surname
+    from students s
+    join people p on s.id = p.id
+    where s.class_year = 0 and s.class_symbol = 'c';
 end;
 
-call propose_new_classes();
+create procedure show_class (yr int, smbl char)
+begin
+    select p.id, p.name, p.surname
+    from students s
+    join people p on s.id = p.id
+    where s.class_year = yr and s.class_symbol = smbl;
+end //
 
-select * from students;
