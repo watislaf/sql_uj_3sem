@@ -28,8 +28,6 @@ drop table if exists scholarship_details;
 
 drop trigger if exists insert_class_courses;
 drop trigger if exists insert_students;
--- drop trigger if exists update_students_counter;
--- drop trigger if exists insert_students_counter;
 drop trigger if exists insert_school_shop;
 drop trigger if exists insert_vacations;
 drop trigger if exists update_vacations;
@@ -714,7 +712,7 @@ begin
     declare n int default 0;
     declare i int default 0;
     declare temp_id int default 0;
-    declare temp_chosen_class  char;
+    declare temp_chosen_class char;
 
     drop table if exists temp;
     create table temp(
@@ -733,18 +731,18 @@ begin
     set n = (select count(*) from temp);
     while i < n do
         set temp_id = (select id from temp c order by candidates_pts(c.id) desc, c.filling_date asc limit 1);
-        set temp_chosen_class  = (select chosen_class_symbol from temp where id = temp_id);
+        set temp_chosen_class = (select chosen_class_symbol from temp where id = temp_id);
 
-        if (select count(*) from temp t where t.chosen_class_symbol = temp_chosen_class  and candidates_pts(t.id) = candidates_pts(temp_id)) > 1 then
+        if (select count(*) from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id)) > 1 then
             case temp_chosen_class
-                when 'm' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class  and candidates_pts(t.id) = candidates_pts(temp_id) order by t.math_exam_result desc, t.filling_date asc limit 1);
-                when 'p' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class  and candidates_pts(t.id) = candidates_pts(temp_id) order by t.pl_exam_result desc, t.filling_date asc limit 1);
-                when 's' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class  and candidates_pts(t.id) = candidates_pts(temp_id) order by t.science_exam_result desc, t.filling_date asc limit 1);
+                when 'm' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.math_exam_result desc, t.filling_date asc limit 1);
+                when 'p' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.pl_exam_result desc, t.filling_date asc limit 1);
+                when 's' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.science_exam_result desc, t.filling_date asc limit 1);
             end case;
         end if;
 
         insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
-            values (temp_id, null, null, 0, (select symbol from class where year = 0 and specialization = temp_chosen_class ));
+            values (temp_id, null, null, 0, (select symbol from class where year = 0 and specialization = temp_chosen_class));
 
         delete from temp
             where id = temp_id;
