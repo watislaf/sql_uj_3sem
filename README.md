@@ -15,7 +15,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 
 1. 23/24 tabele ❌
 --- 
-2. 8/10 widoków lub funkcji ❌
+2. 9/10 widoków lub funkcji ❌
 --- 
 3. 6/5 procedur ✅
 --- 

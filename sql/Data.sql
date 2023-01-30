@@ -120,8 +120,8 @@ values (3, '2012-12-2'),
        (2, '2012-12-4');
 
 insert into course_marks_categories (course_id, description, weight)
-values (1, 'sprawdzian', 3),
-       (2, 'kartkowka', 2),
+values (1, 'sprawdzian - trygonometria', 3),
+       (2, 'kartkowka - hydrostatyka', 2),
        (1, 'aktywnosc', 1);
 
 insert into student_marks(mark_category, id_of_student, mark)

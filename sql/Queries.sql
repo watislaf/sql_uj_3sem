@@ -1,7 +1,7 @@
 use sql_uj_3sem;
 drop view if exists students_timetable;
 drop view if exists candidates_stats;
-drop view if exists journal;
+drop view if exists journal_marks;
 drop view if exists lessons_needing_substitution;
 
 create view students_timetable as
@@ -32,7 +32,18 @@ create view lessons_needing_substitution as
     join subjects s on c.subject_id = s.id
     where l.needs_substitution = true and l.teacher_substitution_id is null;
 
-select * from lessons_needing_substitution;
+-- select * from lessons_needing_substitution;
+
+create view journal_marks as
+    select sm.id_of_student, p.name, p.surname, s.name as subject, cmc.description, sm.mark, cmc.weight
+    from student_marks sm
+    join course_marks_categories cmc on sm.mark_category = cmc.id
+    join courses c on cmc.course_id = c.id
+    join subjects s on c.subject_id = s.id
+    join people p on sm.id_of_student = p.id
+    order by id_of_student, subject, weight desc;
+
+select * from journal_marks;
 
 # -- wypisuje wszystkie zajecia z ocenami i obecnosciami
 # create view journal as
