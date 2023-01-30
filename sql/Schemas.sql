@@ -47,6 +47,7 @@ drop function if exists week_day;
 drop function if exists candidates_pts;
 drop function if exists candidate_in_top6;
 drop function if exists set_new_class_preferences;
+drop function if exists presence_percentage;
 
 create table people(
     id               int         primary key auto_increment,
@@ -790,5 +791,13 @@ begin
     from students s
     join people p on s.id = p.id
     where s.class_year = yr and s.class_symbol = smbl;
+end //
+
+create function presence_percentage (stud_id int)
+    returns decimal (5, 2) deterministic
+begin
+    declare sum int default (select count(*) from journal_presence where id_of_student = stud_id);
+    declare presence int default (select count(*) from journal_presence where id_of_student = stud_id and status = 'present');
+    return (presence/sum) * 100;
 end //
 

@@ -2,6 +2,7 @@ use sql_uj_3sem;
 drop view if exists students_timetable;
 drop view if exists candidates_stats;
 drop view if exists journal_marks;
+drop view if exists journal_presence;
 drop view if exists lessons_needing_substitution;
 
 create view students_timetable as
@@ -43,8 +44,18 @@ create view journal_marks as
     join people p on sm.id_of_student = p.id
     order by id_of_student, subject, weight desc;
 
-select * from journal_marks;
+create view journal_presence as
+    select sp.id_of_student, p.name, p.surname, s.name as subject, l.lesson_date, if(sp.was_absent, 'absent', 'present') as status
+    from student_presence sp
+    join lessons l on sp.id_of_lesson = l.id
+    join timetable t on t.id = l.timetable_id
+    join courses c on t.id_of_course = c.id
+    join subjects s on c.subject_id = s.id
+    join people p on sp.id_of_student = p.id
+    order by id_of_student, l.lesson_date;
 
+-- select * from journal_presence;
+-- select presence_percentage(6);
 # -- wypisuje wszystkie zajecia z ocenami i obecnosciami
 # create view journal as
 # select lesson_date, s.name as subject_name, s2.name, ifnull(sp.was_absent, 0) as was_absent, mark

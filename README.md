@@ -11,16 +11,15 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * skrypty SQL tworzące wszystkie obiekty bazy danych ✅
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF (opis.md). ❌
 
-### Minimalne wymagania dotyczące bazy danych:
+## Minimalne wymagania dotyczące bazy danych:
+23/24 tabele ❌
 
-1. 23/24 tabele ❌
---- 
-2. 9/10 widoków lub funkcji ❌
---- 
-3. 6/5 procedur ✅
---- 
-4. 8/5 wyzwalaczy ✅
----
+11/10 widoków lub funkcji ✅
+
+6/5 procedur ✅
+
+8/5 wyzwalaczy ✅
+
 * Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
 * Marcin - baza powinna zawierać tabele realizujące jeden ze schematów dziedziczenia ✅
 * Michal - należy zaprojektować strategii pielęgnacji bazy danych (kopie zapasowe) ❌
