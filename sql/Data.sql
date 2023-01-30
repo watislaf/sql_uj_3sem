@@ -50,7 +50,7 @@ VALUES ('Jerzy', 'Kowalski', '75201568431', 'm', '1980-10-12'),
        ('Zygmunt', 'Ptak', '75201568031', 'm', '1980-10-12'),
        ('Pola', 'Kowalska', '02201568431', 'k', '1980-10-12'),
        ('Miroslaw', 'Ptak', '02201532431', 'm', '1980-10-12'),
-       ('Bob', 'Borsuk', '7520538431', 'm', '1980-10-12'),
+       ('Bob', 'Borsuk', '71520538431', 'm', '1980-10-12'),
        ('Aneta', 'Zalewska', '98220147492', 'k', '1980-10-12'),
        ('Maria', 'Milkowska', '91220147192', 'k', '1991-02-11'),
        ('Zygmunt', 'Czyscioch', '70173016310', 'm', '1970-12-22'),
@@ -113,7 +113,6 @@ values (1, 1, 108),
        (1, 3, 50),
        (2, 2, 50);
 
-
 insert into lessons(id_of_schedule, lesson_date)
 values (3, '2012-12-2'),
        (1, '2012-12-5'),
@@ -164,6 +163,21 @@ values  (14, 80, 100, 90, false, 'm', '2022-08-01'),
         (19, 80, 95, 95, false, 'm', '2022-08-02'),
         (20, 10, 70, 90, true, 's', '2022-08-02'),
         (21, 60, 50, 90, false, 's', '2022-08-02');
+-- 1, 8
+
+insert into lessons (id_of_schedule, lesson_date)
+values (1, '2023-04-01');
+
+insert into vacations (employee_id, vacation_start, vacation_end)
+values (8, '2022-12-31', null);
+
+update vacations
+set vacation_end = '2022-12-31'
+where employee_id = 8;
+
+update lessons
+set lesson_date = '2022-12-31'
+where lesson_date = '2023-04-01';
 
 insert into school_shop (id, name, quantity, price)
 values (1, 'drozdzowka', 10, 2.00),
@@ -183,5 +197,4 @@ values (1, 'Stypendium starosty', 150, 'm'),
 insert into scholarship_grants (id_of_student, id_of_scholarship)
 values (6, 1),
        (7, 1),
-       (7, 2)
-
+       (7, 2);

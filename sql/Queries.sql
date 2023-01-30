@@ -2,6 +2,7 @@ use sql_uj_3sem;
 drop view if exists students_timetable;
 drop view if exists candidates_stats;
 drop view if exists journal;
+drop view if exists lessons_needing_substitution;
 
 create view students_timetable as
     select p.id, p.name, p.surname, s2.name subject_name, t.id_of_classroom, week_day(ls.week_day), ls.start_time, ls.end_time
@@ -22,7 +23,11 @@ create view candidates_stats as
     join candidates c on p.id = c.id
     order by points desc;
 
-select * from candidates_stats;
+create view lessons_needing_substitution as
+    select * from lessons l
+    where l.needs_substitution = true;
+
+select * from lessons_needing_substitution;
 
 # -- wypisuje wszystkie zajecia z ocenami i obecnosciami
 # create view journal as

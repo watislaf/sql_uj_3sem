@@ -3,10 +3,10 @@ use sql_uj_3sem;
 
 delimiter //
 drop table if exists scholarship_grants;
-drop table if exists administration_employees;
 drop table if exists student_marks;
 drop table if exists course_marks_categories;
 drop table if exists student_presence;
+drop table if exists vacations;
 drop table if exists lessons;
 drop table if exists timetable;
 drop table if exists lessons_schedule;
@@ -16,6 +16,7 @@ drop table if exists class_courses;
 drop table if exists courses;
 drop table if exists subjects;
 drop table if exists classroom_roles;
+drop table if exists administration_employees;
 drop table if exists candidates;
 drop table if exists students;
 drop table if exists class;
@@ -27,9 +28,14 @@ drop table if exists scholarship_details;
 
 drop trigger if exists insert_class_courses;
 drop trigger if exists insert_students;
-drop trigger if exists update_students_counter;
-drop trigger if exists insert_students_counter;
+-- drop trigger if exists update_students_counter;
+-- drop trigger if exists insert_students_counter;
 drop trigger if exists insert_school_shop;
+drop trigger if exists insert_vacations;
+drop trigger if exists update_vacations;
+drop trigger if exists insert_lesson;
+drop trigger if exists update_lesson;
+drop trigger if exists delete_vacations;
 
 drop procedure if exists get_average_mark;
 drop procedure if exists get_students_of_teacher;
@@ -49,7 +55,7 @@ create table people(
     name             varchar(32) not null,
     surname          varchar(32) not null,
     pesel            varchar(11) unique,
-        -- check (pesel like '___________'), -- sprawdzenie czy pesel ma 11 cyfr
+        check (pesel like '___________'), -- sprawdzenie czy pesel ma 11 cyfr
     sex              char        not null check (sex in ('k', 'm')),
     birthday         date        not null
 );
@@ -60,9 +66,9 @@ create table parents(
     adress_street      varchar(128),
     adress_city        varchar(128),
     adress_postal_code varchar(6),
-    -- constraint good_postal check (adress_postal_code like '[0-9][0-9][-][0-9][0-9][0-9]'),
     phone_number       varchar(9) unique,
     email              varchar(64),
+        check (email like '%@%'),
 
     foreign key (id) references people(id)
 );
@@ -75,6 +81,7 @@ create table teachers(
     -- constraint good_postal check (adress_postal_code like '[0-9][0-9][-][0-9][0-9][0-9]'),
     phone_number       varchar(9) unique,
     email              varchar(64),
+        check (email like '%@%'),
     salary             decimal(10, 2),
 
     foreign key (id) references people(id)
@@ -106,7 +113,7 @@ create table students(
 );
 
 create table candidates(
-    id      int         not null primary key,
+    id                  int         not null primary key,
     pl_exam_result      int default 0, -- procentowy wynik egzaminu z polskiego
     math_exam_result    int default 0,
     science_exam_result int default 0,
@@ -116,7 +123,20 @@ create table candidates(
 
     check (pl_exam_result between 0 and 100),
     check (math_exam_result between 0 and 100),
-    check (extracurricular_act between 0 and 100),
+    check (extracurricular_act  between 0 and 100),
+    foreign key (id) references people(id)
+);
+
+-- tabela przechowuje informacje o pracownikach takich jak: sprzataczka, wozny, sekretarka itd.
+create table administration_employees(
+    id       int       not null primary key,
+    adress_street      varchar(128),
+    adress_city        varchar(128),
+    adress_postal_code varchar(6),
+    phone_number       varchar(9) unique,
+    salary             decimal(10, 2),
+    role     varchar(128),
+
     foreign key (id) references people(id)
 );
 
@@ -148,9 +168,8 @@ create table courses(
 create table class_courses(
     class_year      int not null,
     class_symbol    char not null,
-    foreign key (class_year, class_symbol) references class(year, symbol),
-
     course_id       int not null,
+    foreign key (class_year, class_symbol) references class(year, symbol),
     foreign key (course_id) references courses(id),
     primary key (class_year, class_symbol, course_id)
 );
@@ -193,7 +212,6 @@ create table scholarship_grants(
     foreign key (id_of_student) references students (id),
     foreign key (id_of_scholarship) references scholarship_details (id)
 );
-
 
 # create table amount_of_students_on_the_course
 # (
@@ -263,14 +281,26 @@ create table timetable(
 
 -- zajecia same w sobie. maja pointer na harmonogram w ktorym czasie powinny wystepowac
 create table lessons(
-    id             int  not null primary key auto_increment,
-    id_of_schedule int  not null,
-    foreign key (id_of_schedule) references timetable (id),
+    id                          int     primary key auto_increment,
+    id_of_schedule              int     not null,
+    lesson_date                 date    not null,
+    needs_substitution          int     default false,
+    teacher_substitution_id     int     default null,
 
-    lesson_date    date not null
+    foreign key (id_of_schedule)            references  timetable (id)
 );
 
--- oceny/komentarze/obecnosc studenta na pewnych zajeciach
+-- Tabela przechowujaca informacje o urlopach nauczycieli i innych pracownikow szkoly
+create table vacations(
+    employee_id int not null,
+    vacation_start date not null,
+    vacation_end date default null,
+
+    -- check (employee_id in (select id from teachers)),
+    primary key (employee_id, vacation_start)
+);
+
+-- obecnosc studenta na pewnych zajeciach
 create table student_presence(
     id_of_lesson  int not null,
     foreign key (id_of_lesson) references lessons (id),
@@ -299,19 +329,6 @@ create table student_marks(
 
     mark          int,
     check ( mark <= 6 and mark >= 0 )
-);
-
--- tabela przechowuje informacje o pracownikach takich jak: sprzataczka, wozny, sekretarka itd.
-create table administration_employees(
-    id       int       not null primary key,
-    adress_street      varchar(128),
-    adress_city        varchar(128),
-    adress_postal_code varchar(6),
-    phone_number       varchar(9) unique,
-    salary             decimal(10, 2),
-    role     varchar(128),
-
-    foreign key (id) references people(id)
 );
 
 -- po dopisaniu kursu do danej klasy, automatycznie zapisujemy cala klase na ten kurs
@@ -362,6 +379,106 @@ begin
     end loop;
 end //
 
+create trigger insert_vacations
+    after insert
+    on vacations
+    for each row
+begin
+    if new.vacation_end is null then
+        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+            update lessons l
+                set needs_substitution = true
+            where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+        end if;
+    else
+        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+            update lessons l
+                set needs_substitution = true
+            where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+        end if;
+    end if;
+end //
+
+create trigger update_vacations
+    after update
+    on vacations
+    for each row
+begin
+    if old.vacation_end is null then
+        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+            update lessons l
+                set needs_substitution = false
+            where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+        end if;
+    else
+        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+            update lessons l
+                set needs_substitution = false
+            where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+        end if;
+    end if;
+
+    if new.vacation_end is null then
+        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+            update lessons l
+                set needs_substitution = true
+            where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+        end if;
+    else
+        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+            update lessons l
+                set needs_substitution = true
+            where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+        end if;
+    end if;
+end //
+
+create trigger delete_vacations
+    after delete
+    on vacations
+    for each row
+begin
+    if old.vacation_end is null then
+        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+            update lessons l
+                set needs_substitution = false
+            where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+        end if;
+    else
+        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+            update lessons l
+                set needs_substitution = false
+            where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+        end if;
+    end if;
+end //
+
+create trigger insert_lesson
+    before insert
+    on lessons
+    for each row
+begin
+    set @tch_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = new.id_of_schedule));
+
+    if (select count(*) from vacations v where v.employee_id = @tch_id and ((v.vacation_end is null and v.vacation_start <= new.lesson_date) or (v.vacation_end is not null and v.vacation_start <= new.lesson_date and v.vacation_end >= new.lesson_date))) > 0 then
+        set new.needs_substitution = true;
+    end if;
+end //
+
+create trigger update_lesson
+    before update
+    on lessons
+    for each row
+begin
+    set @tch_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = new.id_of_schedule));
+
+    if (select count(*) from vacations v where v.employee_id = @tch_id and ((v.vacation_end is null and v.vacation_start <= new.lesson_date) or (v.vacation_end is not null and v.vacation_start <= new.lesson_date and v.vacation_end >= new.lesson_date))) > 0 then
+        set new.needs_substitution = true;
+    else
+        set new.needs_substitution = false;
+    end if;
+end //
+
 create trigger update_school_shop
     before update
     on school_shop
@@ -371,14 +488,14 @@ begin
     declare msg varchar(255);
 
     if new.quantity < 0 then
-        set msg = "Nie mozna kupic tylu produktow";
+        set msg = 'Nie mozna kupic tylu produktow';
         signal sqlstate '45000' set message_text = msg;
         set new.quantity = old.quantity;
     end if;
 
     if new.quantity < 5 then
         -- jeżeli jest mniej niż 5 produktów, dokup 5
-        set msg = "Zamowiono nowe produkty";
+        set msg = 'Zamowiono nowe produkty';
         signal sqlstate '45000' set message_text = msg;
         set new.quantity = new.quantity + 5;
     end if;
@@ -475,7 +592,7 @@ end //
 create function candidates_pts (can_id int)
     returns decimal(5,2) deterministic
 begin
-    return (select c.pl_exam_result * 0.3 + c.math_exam_result * 0.3 + c.science_exam_result * 0.3 + c.extracurricular_act * 10 from candidates c where c.id = can_id);
+    return (select c.pl_exam_result * 0.3 + c.math_exam_result * 0.3 + c.science_exam_result * 0.3 + c.extracurricular_act  * 10 from candidates c where c.id = can_id);
 end //
 
 -- Procedura wyswietla informacje kontaktowe rodzicow ucznia
@@ -597,7 +714,7 @@ begin
     declare n int default 0;
     declare i int default 0;
     declare temp_id int default 0;
-    declare temp_chosen_class char;
+    declare temp_chosen_class  char;
 
     drop table if exists temp;
     create table temp(
@@ -616,18 +733,18 @@ begin
     set n = (select count(*) from temp);
     while i < n do
         set temp_id = (select id from temp c order by candidates_pts(c.id) desc, c.filling_date asc limit 1);
-        set temp_chosen_class = (select chosen_class_symbol from temp where id = temp_id);
+        set temp_chosen_class  = (select chosen_class_symbol from temp where id = temp_id);
 
-        if (select count(*) from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id)) > 1 then
+        if (select count(*) from temp t where t.chosen_class_symbol = temp_chosen_class  and candidates_pts(t.id) = candidates_pts(temp_id)) > 1 then
             case temp_chosen_class
-                when 'm' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.math_exam_result desc, t.filling_date asc limit 1);
-                when 'p' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.pl_exam_result desc, t.filling_date asc limit 1);
-                when 's' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.science_exam_result desc, t.filling_date asc limit 1);
+                when 'm' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class  and candidates_pts(t.id) = candidates_pts(temp_id) order by t.math_exam_result desc, t.filling_date asc limit 1);
+                when 'p' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class  and candidates_pts(t.id) = candidates_pts(temp_id) order by t.pl_exam_result desc, t.filling_date asc limit 1);
+                when 's' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class  and candidates_pts(t.id) = candidates_pts(temp_id) order by t.science_exam_result desc, t.filling_date asc limit 1);
             end case;
         end if;
 
         insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
-            values (temp_id, null, null, 0, (select symbol from class where year = 0 and specialization = temp_chosen_class));
+            values (temp_id, null, null, 0, (select symbol from class where year = 0 and specialization = temp_chosen_class ));
 
         delete from temp
             where id = temp_id;
