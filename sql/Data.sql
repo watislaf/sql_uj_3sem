@@ -113,7 +113,7 @@ values (1, 1, 108),
        (1, 3, 50),
        (2, 2, 50);
 
-insert into lessons(id_of_schedule, lesson_date)
+insert into lessons(timetable_id, lesson_date)
 values (3, '2012-12-2'),
        (1, '2012-12-5'),
        (1, '2012-12-7'),
@@ -163,21 +163,20 @@ values  (14, 80, 100, 90, false, 'm', '2022-08-01'),
         (19, 80, 95, 95, false, 'm', '2022-08-02'),
         (20, 10, 70, 90, true, 's', '2022-08-02'),
         (21, 60, 50, 90, false, 's', '2022-08-02');
--- 1, 8
 
-insert into lessons (id_of_schedule, lesson_date)
+insert into lessons (timetable_id, lesson_date)
 values (1, '2023-04-01');
 
 insert into vacations (employee_id, vacation_start, vacation_end)
 values (8, '2022-12-31', null);
-
-update vacations
-set vacation_end = '2022-12-31'
-where employee_id = 8;
-
-update lessons
-set lesson_date = '2022-12-31'
-where lesson_date = '2023-04-01';
+#
+# update vacations
+# set vacation_end = '2022-12-31'
+# where employee_id = 8;
+#
+# update lessons
+# set lesson_date = '2022-12-31'
+# where lesson_date = '2023-04-01';
 
 insert into school_shop (id, name, quantity, price)
 values (1, 'drozdzowka', 10, 2.00),

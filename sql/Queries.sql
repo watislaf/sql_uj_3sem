@@ -24,8 +24,13 @@ create view candidates_stats as
     order by points desc;
 
 create view lessons_needing_substitution as
-    select * from lessons l
-    where l.needs_substitution = true;
+    select l.id, l.lesson_date, week_day(ls.week_day) as week_day, ls.start_time, ls.end_time, s.name
+    from lessons l
+    join timetable t on l.timetable_id = t.id
+    join lessons_schedule ls on t.id_lessons_schedules = ls.id
+    join courses c on t.id_of_course = c.id
+    join subjects s on c.subject_id = s.id
+    where l.needs_substitution = true and l.teacher_substitution_id is null;
 
 select * from lessons_needing_substitution;
 

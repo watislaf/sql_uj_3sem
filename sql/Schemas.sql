@@ -280,12 +280,12 @@ create table timetable(
 -- zajecia same w sobie. maja pointer na harmonogram w ktorym czasie powinny wystepowac
 create table lessons(
     id                          int     primary key auto_increment,
-    id_of_schedule              int     not null,
+    timetable_id                int     not null,
     lesson_date                 date    not null,
     needs_substitution          int     default false,
     teacher_substitution_id     int     default null,
 
-    foreign key (id_of_schedule)            references  timetable (id)
+    foreign key (timetable_id)            references  timetable (id)
 );
 
 -- Tabela przechowujaca informacje o urlopach nauczycieli i innych pracownikow szkoly
@@ -383,16 +383,16 @@ create trigger insert_vacations
     for each row
 begin
     if new.vacation_end is null then
-        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id))) > 0 then
             update lessons l
                 set needs_substitution = true
-            where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+            where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id));
         end if;
     else
-        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id))) > 0 then
             update lessons l
                 set needs_substitution = true
-            where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+            where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id));
         end if;
     end if;
 end //
@@ -403,30 +403,30 @@ create trigger update_vacations
     for each row
 begin
     if old.vacation_end is null then
-        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id))) > 0 then
             update lessons l
                 set needs_substitution = false
-            where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+            where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id));
         end if;
     else
-        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id))) > 0 then
             update lessons l
                 set needs_substitution = false
-            where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+            where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id));
         end if;
     end if;
 
     if new.vacation_end is null then
-        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id))) > 0 then
             update lessons l
                 set needs_substitution = true
-            where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+            where l.lesson_date >= new.vacation_start and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id));
         end if;
     else
-        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+        if (select count(*) from lessons l where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id))) > 0 then
             update lessons l
                 set needs_substitution = true
-            where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+            where l.lesson_date >= new.vacation_start and l.lesson_date <= new.vacation_end and new.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id));
         end if;
     end if;
 end //
@@ -437,16 +437,16 @@ create trigger delete_vacations
     for each row
 begin
     if old.vacation_end is null then
-        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id))) > 0 then
             update lessons l
                 set needs_substitution = false
-            where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+            where l.lesson_date >= old.vacation_start and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id));
         end if;
     else
-        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule))) > 0 then
+        if (select count(*) from lessons l where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id))) > 0 then
             update lessons l
                 set needs_substitution = false
-            where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.id_of_schedule));
+            where l.lesson_date >= old.vacation_start and l.lesson_date <= old.vacation_end and old.employee_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = l.timetable_id));
         end if;
     end if;
 end //
@@ -456,7 +456,7 @@ create trigger insert_lesson
     on lessons
     for each row
 begin
-    set @tch_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = new.id_of_schedule));
+    set @tch_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = new.timetable_id));
 
     if (select count(*) from vacations v where v.employee_id = @tch_id and ((v.vacation_end is null and v.vacation_start <= new.lesson_date) or (v.vacation_end is not null and v.vacation_start <= new.lesson_date and v.vacation_end >= new.lesson_date))) > 0 then
         set new.needs_substitution = true;
@@ -468,7 +468,7 @@ create trigger update_lesson
     on lessons
     for each row
 begin
-    set @tch_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = new.id_of_schedule));
+    set @tch_id = (select teacher_id from courses c where c.id = (select id_of_course from timetable t where t.id = new.timetable_id));
 
     if (select count(*) from vacations v where v.employee_id = @tch_id and ((v.vacation_end is null and v.vacation_start <= new.lesson_date) or (v.vacation_end is not null and v.vacation_start <= new.lesson_date and v.vacation_end >= new.lesson_date))) > 0 then
         set new.needs_substitution = true;
