@@ -37,6 +37,7 @@ drop function if exists set_absence_to_student;
 drop function if exists week_day;
 drop function if exists candidates_pts;
 drop function if exists candidate_in_top6;
+drop function if exists set_new_class_preferences;
 
 create table people(
     id               int         primary key auto_increment,
@@ -492,8 +493,55 @@ begin
     end if;
 end //
 
+create function set_new_class_preferences (m_full int, p_full int, s_full int, pref char)
+    returns char deterministic
+begin
+    case pref
+        when 'm' then
+            if (!m_full) then
+                return 'm';
+            else
+                if (!s_full) then
+                    return 's';
+                else
+                    return 'p';
+                end if;
+            end if;
+        when 'p' then
+            if (!p_full) then
+                return 'p';
+            else
+                if (!s_full) then
+                    return 's';
+                else
+                    return 'm';
+                end if;
+            end if;
+        when 's' then
+            if (!s_full) then
+                return 's';
+            else
+                if (!m_full) then
+                    return 'm';
+                else
+                    return 'p';
+                end if;
+            end if;
+    end case;
+end //
+
 create procedure propose_new_classes ()
 begin
+    declare class_capacity int default 2;
+    declare m_students smallint default 0;
+    declare s_students smallint default 0;
+    declare p_students smallint default 0;
+    declare n int default 0;
+    declare i int default 0;
+    declare temp_id int default 0;
+    declare temp_choosed_class char;
+    -- declare qry varchar(256) default 'select * from temp where id = ?';
+
     drop table if exists temp;
     create table temp(
         id int,
@@ -506,7 +554,53 @@ begin
     );
 
     insert into temp
-        select * from candidates c order by candidates_pts(c.id) desc, c.filling_date asc limit 6;
+        select * from candidates c where candidates_pts(c.id) >= 50 order by candidates_pts(c.id) desc, c.filling_date asc limit 6;
+
+    set n = (select count(*) from temp);
+    while i < n do
+        set temp_id = (select id from temp c order by candidates_pts(c.id) desc, c.filling_date asc limit 1);
+        set temp_choosed_class = (select choosed_class_symbol from temp where id = temp_id);
+
+        if (select count(*) from temp t where t.choosed_class_symbol = temp_choosed_class and candidates_pts(t.id) = candidates_pts(temp_id)) > 1 then
+            case temp_choosed_class
+                when 'm' then set temp_id = (select id from temp t where t.choosed_class_symbol = temp_choosed_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.math_exam_result desc, t.filling_date asc limit 1);
+                when 'p' then set temp_id = (select id from temp t where t.choosed_class_symbol = temp_choosed_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.pl_exam_result desc, t.filling_date asc limit 1);
+                when 's' then set temp_id = (select id from temp t where t.choosed_class_symbol = temp_choosed_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.science_exam_result desc, t.filling_date asc limit 1);
+            end case;
+        end if;
+
+        insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
+            values (temp_id, null, null, 0, (select symbol from class where year = 0 and specialization = temp_choosed_class));
+
+        delete from temp
+            where id = temp_id;
+
+        case temp_choosed_class
+            when 'm' then set m_students = m_students + 1;
+            when 'p' then set p_students = p_students + 1;
+            when 's' then set s_students = s_students + 1;
+        end case;
+
+        update temp
+        set choosed_class_symbol = set_new_class_preferences (m_students >= class_capacity, p_students >= class_capacity, s_students >= class_capacity, choosed_class_symbol)
+        where choosed_class_symbol = choosed_class_symbol;
+
+        set i = i + 1;
+    end while;
 
 
-end //
+#     set @qry = 'select * from temp limit ?, 1';
+#
+#     set @i = 0;
+#     while @i < n do
+#         prepare stm from @qry;
+#         execute stm using @i;
+#         deallocate prepare stm;
+#         set @i = @i + 1;
+#     end while;
+
+end;
+
+call propose_new_classes();
+
+select * from students;

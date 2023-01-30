@@ -16,7 +16,7 @@ create view students_timetable as
 
 -- Wyswietla liste kandydatow z obliczonymi punktami do rekrutacji do szkoly oraz decyzją - czy mają ich dość by się dostać
 create view candidates_stats as
-    select p.name, p.surname, candidates_pts(c.id) as points,
+    select p.id, p.name, p.surname, candidates_pts(c.id) as points,
         if(candidates_pts(c.id) >= 50, if(candidate_in_top6(c.id), 'Approved', 'Not approved (reserve)'), 'Not approved') as Decision
     from people p
     join candidates c on p.id = c.id

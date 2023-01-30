@@ -2,7 +2,6 @@
 ## WIP/uwagi (Marcin):
 1. widok *Journal* nie dziala, trzeba pomyslec czy na pewno chcemy taki widok w naszej bazie
 2. tabela *amount_of_students_on_the_course* i odpowiadajace jej triggery sa wykomentowane, bo wg mnie to jest strasznie na sile zrobione i Byrskiemu sie to nie spodoba
-3. proceutra *propose_new_classes* jest wip
 ## Zadanie
 
 Baza danych szkoly. Baza powinna przechowywac informacje o przedmiotach, nauczycielach,
@@ -23,11 +22,11 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 --- 
 
 1. Michal - 0/4 widoków lub funkcji
-2. Marcin - 2/3 widoków lub funkcji
+2. Marcin - 5/3 widoków lub funkcji ✅ (niektóre z nich są dość mało znaczące i nie wiem czy je wliczać)
 3. Vlad - 3/3 widoków lub funkcji ✅
 --- 
 1. Michal - 0/1 procedur.
-2. Marcin - 2/2 procedur ✅
+2. Marcin - 3/2 procedur ✅
 3. Vlad - 2/2 procedur ✅
 --- 
 1. Michal - 0/1 wyzwalaczy.

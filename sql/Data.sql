@@ -71,7 +71,8 @@ insert into class (year, symbol, admin_teacher_id, specialization)
 values (1, 'a', 8, 'm'),
        (1, 'b', 9, 's'),
        (0, 'a', 8, 'm'),
-       (0, 'b', 9, 's');
+       (0, 'b', 9, 's'),
+       (0, 'c', 9, 'p');
 
 insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
 values (6, 1, 2, 1, 'a'),
@@ -155,11 +156,11 @@ insert into students (id, first_parent_id, second_parent_id, class_year, class_s
 values (13, null, null, 1, 'a');
 
 insert into candidates (id, pl_exam_result, math_exam_result, science_exam_result, extracurlicural_act, choosed_class_symbol, filling_date)
-values  (14, 81, 9, 57, true, 's', '2022-08-01'),
-        (15, 10, 2, 0, false, 's', '2022-08-02'),
-        (16, 100, 90, 85, false, 'm', '2022-08-02'),
-        (17, 81, 9, 57, true, 'p', '2022-08-02'),
-        (18, 70, 100, 70, false, 'm', '2022-08-02'),
-        (19, 60, 60, 60, true, 'm', '2022-08-02'),
+values  (14, 80, 100, 90, false, 'm', '2022-08-01'),
+        (15, 50, 50, 50, false, 'm', '2022-08-02'),
+        (16, 100, 80, 90, false, 'm', '2022-08-02'),
+        (17, 90, 80, 100, false, 'm', '2022-08-02'),
+        (18, 80, 95, 95, false, 'm', '2022-08-03'),
+        (19, 80, 95, 95, false, 'm', '2022-08-02'),
         (20, 10, 70, 90, true, 's', '2022-08-02'),
         (21, 60, 50, 90, false, 's', '2022-08-02');
