@@ -77,7 +77,6 @@ create table teachers(
     adress_street      varchar(128),
     adress_city        varchar(128),
     adress_postal_code varchar(6),
-    -- constraint good_postal check (adress_postal_code like '[0-9][0-9][-][0-9][0-9][0-9]'),
     phone_number       varchar(9) unique,
     email              varchar(64),
         check (email like '%@%'),
@@ -98,6 +97,7 @@ create table class(
     primary key (year, symbol)
 );
 
+-- tabela przechowuje informacje o uczniach liceum
 create table students(
     id                  int     not null primary key,
     first_parent_id     int,
@@ -111,14 +111,15 @@ create table students(
     foreign key (id)                        references  people(id)
 );
 
+-- tabela pzechowuje innformacje o kandydatach do szkoly
 create table candidates(
-    id                  int         not null primary key,
-    pl_exam_result      int default 0, -- procentowy wynik egzaminu z polskiego
-    math_exam_result    int default 0,
-    science_exam_result int default 0,
-    extracurricular_act int default false, -- czy ma jakies pozaszkolne aktywnosci - wolontariat na przyklad
-    chosen_class_symbol char default null,
-    filling_date        datetime,
+    id                      int     not null primary key,
+    pl_exam_result          int     default 0, -- procentowy wynik egzaminu z polskiego
+    math_exam_result        int     default 0,
+    science_exam_result     int     default 0,
+    extracurricular_act     int     default false, -- czy ma jakies pozaszkolne aktywnosci - wolontariat na przyklad
+    chosen_class_symbol     char    default null,
+    filling_date            datetime,
 
     check (pl_exam_result between 0 and 100),
     check (math_exam_result between 0 and 100),
@@ -128,39 +129,39 @@ create table candidates(
 
 -- tabela przechowuje informacje o pracownikach takich jak: sprzataczka, wozny, sekretarka itd.
 create table administration_employees(
-    id       int       not null primary key,
+    id                 int       not null primary key,
     adress_street      varchar(128),
     adress_city        varchar(128),
     adress_postal_code varchar(6),
     phone_number       varchar(9) unique,
     salary             decimal(10, 2),
-    role     varchar(128),
+    role               varchar(128),
 
     foreign key (id) references people(id)
 );
 
 -- tabela przechowuje specialne role sal lekcyjnych
 create table classroom_roles(
-    id          int not null primary key auto_increment,
-    description varchar(256)
+    id              int not null primary key auto_increment,
+    description     varchar(256)
 );
 
 -- reprezentacja ogolnego przedmiotu
 create table subjects(
-    id          int         not null primary key auto_increment,
-    name        varchar(32) not null,
-    description varchar(255),
+    id                      int             not null primary key auto_increment,
+    name                    varchar(32)     not null,
+    description             varchar(255),
     required_classroom_type int not null,
     foreign key (required_classroom_type) references classroom_roles(id)
 );
 
 -- na przyklad jezyk polski z krzystofem k.
 create table courses(
-    id         int not null primary key auto_increment,
-    teacher_id int not null,
-    foreign key (teacher_id) references teachers (id),
+    id              int     not null primary key auto_increment,
+    teacher_id      int     not null,
+    subject_id      int     not null,
 
-    subject_id int not null,
+    foreign key (teacher_id) references teachers (id),
     foreign key (subject_id) references subjects (id)
 );
 
@@ -175,8 +176,8 @@ create table class_courses(
 
 -- pokazuje ktory student chodzi do jakiej grupy
 create table students_attending_courses(
-    id_of_student int not null,
-    id_of_course  int not null,
+    id_of_student   int not null,
+    id_of_course    int not null,
 
     primary key (id_of_student, id_of_course),
     foreign key (id_of_student) references students (id),
@@ -193,10 +194,10 @@ create table school_shop(
 );
 
 create table scholarship_details(
-    id int not null,
-    name varchar(30),
-    amount int not null,
-    payment_frequency char not null,
+    id                  int not null,
+    name                varchar(30),
+    amount              int not null,
+    payment_frequency   char not null,
 
     primary key (id),
     -- częstotliwośc wypłaty:  m - raz na miesiąc, y - raz w ciągu roku, s - raz na semestr
@@ -204,8 +205,8 @@ create table scholarship_details(
 );
 
 create table scholarship_grants(
-    id_of_student int not null,
-    id_of_scholarship  int not null,
+    id_of_student       int     not null,
+    id_of_scholarship   int     not null,
 
     primary key (id_of_student, id_of_scholarship),
     foreign key (id_of_student) references students (id),
@@ -243,35 +244,33 @@ create table scholarship_grants(
 # end //
 
 -- tabela przechowuje wszelkie dane na temat sal lekcyjnych
-create table classrooms
-(
-    id              int not null primary key, -- jako id traktuje numer sali ktory widnieje na drzwiach, wiec nie ma auto_increment
-    capacity        int,                      -- ile uczniow miesci sie w sali
-    has_projector   boolean,                  -- czy sala ma projektor multimedialny?
-    special_role_id int,
-    foreign key (special_role_id) references classroom_roles (id),
+create table classrooms(
+    id                  int not null primary key, -- jako id traktuje numer sali ktory widnieje na drzwiach, wiec nie ma auto_increment
+    capacity            int,                      -- ile uczniow miesci sie w sali
+    has_projector       boolean,                  -- czy sala ma projektor multimedialny?
+    special_role_id     int,
+    last_renovation     date,                     -- data ostatniego remontu
 
-    last_renovation date                      -- data ostatniego remontu
+    foreign key (special_role_id) references classroom_roles (id)
 );
 
 -- Rozpiska dzwonkow
 create table lessons_schedule(
-    id int primary key auto_increment,
-    week_day int not null,
-    check (week_day between 1 and 7),
-
-    lesson_num int not null,
-    start_time      time default ('12:00:00'),
-    end_time        time default ('13:00:00'),
-    check (start_time < end_time)
+    id              int     primary key auto_increment,
+    week_day        int     not null,
+        check (week_day between 1 and 7),
+    lesson_num      int     not null,
+    start_time      time    default ('12:00:00'),
+    end_time        time    default ('13:00:00'),
+        check (start_time < end_time)
 );
 
 -- Plan lekcji, np. w piatek o 7:30 w sali numer 50 ma lekcje kurs o zadanym ID
 create table timetable(
-    id int primary key auto_increment,
-    id_lessons_schedules int not null,
-    id_of_course    int not null,
-    id_of_classroom int not null,
+    id                      int     primary key auto_increment,
+    id_lessons_schedules    int     not null,
+    id_of_course            int     not null,
+    id_of_classroom         int     not null,
 
     foreign key (id_lessons_schedules) references lessons_schedule(id),
     foreign key (id_of_course) references courses (id),
@@ -286,48 +285,48 @@ create table lessons(
     needs_substitution          int     default false,
     teacher_substitution_id     int     default null,
 
-    foreign key (timetable_id)            references  timetable (id)
+    foreign key (timetable_id) references timetable (id)
 );
 
 -- Tabela przechowujaca informacje o urlopach nauczycieli i innych pracownikow szkoly
 create table vacations(
-    employee_id int not null,
-    vacation_start date not null,
-    vacation_end date default null,
+    employee_id         int     not null,
+    vacation_start      date    not null,
+    vacation_end        date    default null,
 
-    -- check (employee_id in (select id from teachers)),
     primary key (employee_id, vacation_start)
 );
 
 -- obecnosc studenta na pewnych zajeciach
 create table student_presence(
-    id_of_lesson  int not null,
+    id_of_lesson    int         not null,
+    id_of_student   int         not null,
+    was_absent      boolean     default true,
+
     foreign key (id_of_lesson) references lessons (id),
-    id_of_student int not null,
     foreign key (id_of_student) references students (id),
-    primary key (id_of_lesson, id_of_student),
-    was_absent    boolean default true
+    primary key (id_of_lesson, id_of_student)
 );
 
 create table course_marks_categories(
-    id  int not null primary key auto_increment,
-    course_id int not null,
-    description varchar(256),
-    weight int default 1,
+    id              int             not null primary key auto_increment,
+    course_id       int             not null,
+    description     varchar(256),
+    weight          int             default 1,
         check (weight >= 0),
+
     foreign key (course_id) references courses(id)
 );
 -- oceny studenta na pewnych zajeciach
 create table student_marks(
-    id            int not null primary key auto_increment,
-    mark_category  int not null ,
+    id              int         not null primary key auto_increment,
+    mark_category   int         not null,
+    id_of_student   int         not null,
+    mark            int,
+        check (mark <= 6 and mark >= 0),
+
     foreign key (mark_category) references course_marks_categories (id),
-
-    id_of_student int not null ,
-    foreign key (id_of_student) references students (id),
-
-    mark          int,
-    check ( mark <= 6 and mark >= 0 )
+    foreign key (id_of_student) references students (id)
 );
 
 -- po dopisaniu kursu do danej klasy, automatycznie zapisujemy cala klase na ten kurs
@@ -536,6 +535,7 @@ begin
     end if;
 end;
 
+-- Wypisuje liste uczniow ktorych uczy zadany nauczyciel
 create procedure get_students_of_teacher(in teacherId int)
 begin
     select distinct students.*
@@ -649,6 +649,7 @@ begin
     end if;
 end //
 
+-- Funkcja zwraca informacje o tym czy dany kandydat jest w top 6 osobach - czy ma szanse sie dostac do szkoly?
 create function candidate_in_top6 (can_id int)
     returns int deterministic
 begin
@@ -667,6 +668,7 @@ begin
     end if;
 end //
 
+-- Funkcja uzywana w procedurze propose_new_classes() w sytuacji, gdy klasa do ktorej chcialby dostac sie uczen jest juz zapelniona
 create function set_new_class_preferences (m_full int, p_full int, s_full int, pref char)
     returns char deterministic
 begin
@@ -704,6 +706,7 @@ begin
     end case;
 end //
 
+-- Procedura wybiera 6 najlepszych osob z listy kandydatow, a nastepnie przydziela im odpowiednie klasy, zgodnie z opiem rekrutacji
 create procedure propose_new_classes ()
 begin
     declare class_capacity int default 2;
@@ -785,6 +788,7 @@ begin
     where s.class_year = 0 and s.class_symbol = 'c';
 end;
 
+-- Wyswietla liste uczniow w klasie zadanej w argumencie
 create procedure show_class (yr int, smbl char)
 begin
     select p.id, p.name, p.surname
@@ -793,6 +797,7 @@ begin
     where s.class_year = yr and s.class_symbol = smbl;
 end //
 
+-- Wyswietla informacje na ilu zajeciach (procentowo) byl dany uczen
 create function presence_percentage (stud_id int)
     returns decimal (5, 2) deterministic
 begin
