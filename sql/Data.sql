@@ -155,7 +155,7 @@ values ('Marek', 'Ryba', '02738123481', 'm', '2002-06-25'),
 insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
 values (13, null, null, 1, 'a');
 
-insert into candidates (id, pl_exam_result, math_exam_result, science_exam_result, extracurlicural_act, choosed_class_symbol, filling_date)
+insert into candidates (id, pl_exam_result, math_exam_result, science_exam_result, extracurricular_act, chosen_class_symbol, filling_date)
 values  (14, 80, 100, 90, false, 'm', '2022-08-01'),
         (15, 50, 50, 50, false, 'm', '2022-08-02'),
         (16, 100, 80, 90, false, 'm', '2022-08-02'),
@@ -164,3 +164,24 @@ values  (14, 80, 100, 90, false, 'm', '2022-08-01'),
         (19, 80, 95, 95, false, 'm', '2022-08-02'),
         (20, 10, 70, 90, true, 's', '2022-08-02'),
         (21, 60, 50, 90, false, 's', '2022-08-02');
+
+insert into school_shop (id, name, quantity, price)
+values (1, 'drozdzowka', 10, 2.00),
+       (2, 'pizzerinka', 15, 2.50),
+       (3, 'woda', 10, 2.00),
+       (4, 'chrupki kukurydziane', 10, 3.50),
+       (5, 'paluszki', 20, 1.85),
+       (6, 'chusteczki', 50, 0.50),
+       (7, 'wafle ryzowe', 20, 3.70);
+
+
+insert into scholarship_details (id, name, amount, payment_frequency)
+values (1, 'Stypendium starosty', 150, 'm'),
+       (2, 'Stypendium unijne', 2000, 's');
+
+
+insert into scholarship_grants (id_of_student, id_of_scholarship)
+values (6, 1),
+       (7, 1),
+       (7, 2)
+

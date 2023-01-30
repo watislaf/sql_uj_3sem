@@ -2,6 +2,7 @@ create database if not exists sql_uj_3sem;
 use sql_uj_3sem;
 
 delimiter //
+drop table if exists scholarship_grants;
 drop table if exists administration_employees;
 drop table if exists student_marks;
 drop table if exists course_marks_categories;
@@ -21,11 +22,14 @@ drop table if exists class;
 drop table if exists teachers;
 drop table if exists parents;
 drop table if exists people;
+drop table if exists school_shop;
+drop table if exists scholarship_details;
 
 drop trigger if exists insert_class_courses;
 drop trigger if exists insert_students;
 drop trigger if exists update_students_counter;
 drop trigger if exists insert_students_counter;
+drop trigger if exists insert_school_shop;
 
 drop procedure if exists get_average_mark;
 drop procedure if exists get_students_of_teacher;
@@ -103,16 +107,16 @@ create table students(
 
 create table candidates(
     id      int         not null primary key,
-    pl_exam_result int default 0, -- procentowy wynik egzaminu z polskiego
-    math_exam_result int default 0,
+    pl_exam_result      int default 0, -- procentowy wynik egzaminu z polskiego
+    math_exam_result    int default 0,
     science_exam_result int default 0,
-    extracurlicural_act int default false, -- czy ma jakies pozaszkolne aktywnosci - wolontariat na przyklad
-    choosed_class_symbol char default null,
-    filling_date datetime,
+    extracurricular_act int default false, -- czy ma jakies pozaszkolne aktywnosci - wolontariat na przyklad
+    chosen_class_symbol char default null,
+    filling_date        datetime,
 
     check (pl_exam_result between 0 and 100),
     check (math_exam_result between 0 and 100),
-    check (extracurlicural_act between 0 and 100),
+    check (extracurricular_act between 0 and 100),
     foreign key (id) references people(id)
 );
 
@@ -142,10 +146,11 @@ create table courses(
 );
 
 create table class_courses(
-    class_year int not null,
-    class_symbol char not null,
+    class_year      int not null,
+    class_symbol    char not null,
     foreign key (class_year, class_symbol) references class(year, symbol),
-    course_id int not null,
+
+    course_id       int not null,
     foreign key (course_id) references courses(id),
     primary key (class_year, class_symbol, course_id)
 );
@@ -158,6 +163,35 @@ create table students_attending_courses(
     primary key (id_of_student, id_of_course),
     foreign key (id_of_student) references students (id),
     foreign key (id_of_course) references courses (id)
+);
+
+create table school_shop(
+    id          int not null,
+    name        varchar(30),
+    quantity    int not null,
+    price       decimal(10,2) not null,
+
+    primary key (id)
+);
+
+create table scholarship_details(
+    id int not null,
+    name varchar(30),
+    amount int not null,
+    payment_frequency char not null,
+
+    primary key (id),
+    -- częstotliwośc wypłaty:  m - raz na miesiąc, y - raz w ciągu roku, s - raz na semestr
+    check (payment_frequency in ('m', 'y', 's'))
+);
+
+create table scholarship_grants(
+    id_of_student int not null,
+    id_of_scholarship  int not null,
+
+    primary key (id_of_student, id_of_scholarship),
+    foreign key (id_of_student) references students (id),
+    foreign key (id_of_scholarship) references scholarship_details (id)
 );
 
 
@@ -328,6 +362,29 @@ begin
     end loop;
 end //
 
+create trigger update_school_shop
+    before update
+    on school_shop
+    for each row
+
+begin
+    declare msg varchar(255);
+
+    if new.quantity < 0 then
+        set msg = "Nie mozna kupic tylu produktow";
+        signal sqlstate '45000' set message_text = msg;
+        set new.quantity = old.quantity;
+    end if;
+
+    if new.quantity < 5 then
+        -- jeżeli jest mniej niż 5 produktów, dokup 5
+        set msg = "Zamowiono nowe produkty";
+        signal sqlstate '45000' set message_text = msg;
+        set new.quantity = new.quantity + 5;
+    end if;
+
+end //
+
 DELIMITER //
 /* ------ ------ ------ ------ ------ ------ procedures */
 create procedure get_average_mark(in studentId int, in courseId int)
@@ -418,7 +475,7 @@ end //
 create function candidates_pts (can_id int)
     returns decimal(5,2) deterministic
 begin
-    return (select c.pl_exam_result * 0.3 + c.math_exam_result * 0.3 + c.science_exam_result * 0.3 + c.extracurlicural_act * 10 from candidates c where c.id = can_id);
+    return (select c.pl_exam_result * 0.3 + c.math_exam_result * 0.3 + c.science_exam_result * 0.3 + c.extracurricular_act * 10 from candidates c where c.id = can_id);
 end //
 
 -- Procedura wyswietla informacje kontaktowe rodzicow ucznia
@@ -540,7 +597,7 @@ begin
     declare n int default 0;
     declare i int default 0;
     declare temp_id int default 0;
-    declare temp_choosed_class char;
+    declare temp_chosen_class char;
 
     drop table if exists temp;
     create table temp(
@@ -548,8 +605,8 @@ begin
         pl_exam_result int,
         math_exam_result int,
         science_exam_result int,
-        extracurlicural_act int,
-        choosed_class_symbol char,
+        extracurricular_act int,
+        chosen_class_symbol char,
         filling_date datetime
     );
 
@@ -559,31 +616,31 @@ begin
     set n = (select count(*) from temp);
     while i < n do
         set temp_id = (select id from temp c order by candidates_pts(c.id) desc, c.filling_date asc limit 1);
-        set temp_choosed_class = (select choosed_class_symbol from temp where id = temp_id);
+        set temp_chosen_class = (select chosen_class_symbol from temp where id = temp_id);
 
-        if (select count(*) from temp t where t.choosed_class_symbol = temp_choosed_class and candidates_pts(t.id) = candidates_pts(temp_id)) > 1 then
-            case temp_choosed_class
-                when 'm' then set temp_id = (select id from temp t where t.choosed_class_symbol = temp_choosed_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.math_exam_result desc, t.filling_date asc limit 1);
-                when 'p' then set temp_id = (select id from temp t where t.choosed_class_symbol = temp_choosed_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.pl_exam_result desc, t.filling_date asc limit 1);
-                when 's' then set temp_id = (select id from temp t where t.choosed_class_symbol = temp_choosed_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.science_exam_result desc, t.filling_date asc limit 1);
+        if (select count(*) from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id)) > 1 then
+            case temp_chosen_class
+                when 'm' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.math_exam_result desc, t.filling_date asc limit 1);
+                when 'p' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.pl_exam_result desc, t.filling_date asc limit 1);
+                when 's' then set temp_id = (select id from temp t where t.chosen_class_symbol = temp_chosen_class and candidates_pts(t.id) = candidates_pts(temp_id) order by t.science_exam_result desc, t.filling_date asc limit 1);
             end case;
         end if;
 
         insert into students (id, first_parent_id, second_parent_id, class_year, class_symbol)
-            values (temp_id, null, null, 0, (select symbol from class where year = 0 and specialization = temp_choosed_class));
+            values (temp_id, null, null, 0, (select symbol from class where year = 0 and specialization = temp_chosen_class));
 
         delete from temp
             where id = temp_id;
 
-        case temp_choosed_class
+        case temp_chosen_class
             when 'm' then set m_students = m_students + 1;
             when 'p' then set p_students = p_students + 1;
             when 's' then set s_students = s_students + 1;
         end case;
 
         update temp
-        set choosed_class_symbol = set_new_class_preferences (m_students >= class_capacity, p_students >= class_capacity, s_students >= class_capacity, choosed_class_symbol)
-        where choosed_class_symbol = choosed_class_symbol;
+        set chosen_class_symbol = set_new_class_preferences (m_students >= class_capacity, p_students >= class_capacity, s_students >= class_capacity, chosen_class_symbol)
+        where chosen_class_symbol = chosen_class_symbol;
 
         set i = i + 1;
     end while;
