@@ -789,11 +789,3 @@ begin
     where s.class_year = yr and s.class_symbol = smbl;
 end //
 
--- Wyswietla informacje na ilu zajeciach (procentowo) byl dany uczen
-create function presence_percentage (stud_id int)
-    returns decimal (5, 2) deterministic
-begin
-    declare sum int default (select count(*) from journal_presence where id_of_student = stud_id);
-    declare presence int default (select count(*) from journal_presence where id_of_student = stud_id and status = 'present');
-    return (presence/sum) * 100;
-end //

@@ -1,10 +1,6 @@
 use sql_uj_3sem;
-drop view if exists students_timetable;
-drop view if exists candidates_stats;
-drop view if exists journal_marks;
-drop view if exists journal_presence;
-drop view if exists lessons_needing_substitution;
 
+delimiter //
 -- Wyswietla liste zajec dla wszystkich uczniow
 create view students_timetable as
     select p.id, p.name, p.surname, s2.name subject_name, t.id_of_classroom, week_day(ls.week_day), ls.start_time, ls.end_time
@@ -67,6 +63,15 @@ create view journal_presence as
 -- select * from journal_presence;
 
 -- Wyswietla informacje na ilu zajeciach (procentowo) byl dany uczen
+create function presence_percentage (stud_id int)
+    returns decimal (5, 2) deterministic
+begin
+    declare sum int default (select count(*) from journal_presence where id_of_student = stud_id);
+    declare presence int default (select count(*) from journal_presence where id_of_student = stud_id and status = 'present');
+    return (presence/sum) * 100;
+end //
+
+-- Wyswietla informacje na ilu zajeciach (procentowo) byl dany uczen
  select presence_percentage(6);
 
 -- Wypisuje srednia ocene dla studenta x i przedmiotu y
@@ -83,7 +88,7 @@ call class_timetable(1, 'a');
 
 call show_class (1, 'a');
 
-call propose_new_classes();
+-- call propose_new_classes();
 
 -- ustawia obecnosc studentowi w pewien dzien
  select set_absence_to_student('2012-12-05', 6, 1);
