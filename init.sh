@@ -22,4 +22,4 @@ crontab ${CRONE_TAB_FILE}
 
 echo "mysql   -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} -e 'call ${MYSQL_DATABASE}.update_lessons_in_progress;'" > ${UPDATE_SCRIPT}
 echo "mysqldump -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} --databases ${MYSQL_DATABASE} > ${SAVE_DIR}/\$(date +%m-%d-%Y_%H:%M).sql;" > ${CREATE_DUMP_SCRIPT}
-echo "if [[ \$(find ${SAVE_DIR} | wc -l) == 10 ]]; then rm \$(ls ${SAVE_DIR} -t | head -10 | tail -1); fi">> ${CREATE_DUMP_SCRIPT}
+echo "if ( \$(find ${SAVE_DIR} | wc -l) == 10 ); then rm \$(ls ${SAVE_DIR} -t | head -10 | tail -1); fi">> ${CREATE_DUMP_SCRIPT}
