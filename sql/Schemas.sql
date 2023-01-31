@@ -1,56 +1,8 @@
+drop database if exists sql_uj_3sem;
 create database if not exists sql_uj_3sem;
 use sql_uj_3sem;
 
 delimiter //
-drop table if exists scholarship_grants;
-drop table if exists student_marks;
-drop table if exists course_marks_categories;
-drop table if exists student_presence;
-drop table if exists vacations;
-drop table if exists lessons;
-drop table if exists timetable;
-drop table if exists lessons_schedule;
-drop table if exists classrooms;
-drop table if exists students_attending_courses;
-drop table if exists class_courses;
-drop table if exists courses;
-drop table if exists subjects;
-drop table if exists classroom_roles;
-drop table if exists administration_employees;
-drop table if exists candidates;
-drop table if exists students;
-drop table if exists class;
-drop table if exists teachers;
-drop table if exists parents;
-drop table if exists people;
-drop table if exists orders;
-drop table if exists transactions;
-drop table if exists school_shop;
-drop table if exists scholarship_details;
-drop table if exists product_category;
-
-drop trigger if exists insert_class_courses;
-drop trigger if exists insert_students;
-drop trigger if exists insert_transaction;
-drop trigger if exists insert_vacations;
-drop trigger if exists update_vacations;
-drop trigger if exists insert_lesson;
-drop trigger if exists update_lesson;
-drop trigger if exists delete_vacations;
-
-drop procedure if exists get_average_mark;
-drop procedure if exists get_students_of_teacher;
-drop procedure if exists class_timetable;
-drop procedure if exists get_parents_contact_info;
-drop procedure if exists propose_new_classes;
-drop procedure if exists show_class;
-
-drop function if exists set_absence_to_student;
-drop function if exists week_day;
-drop function if exists candidates_pts;
-drop function if exists candidate_in_top6;
-drop function if exists set_new_class_preferences;
-drop function if exists presence_percentage;
 
 create table people(
     id               int            primary key auto_increment,
@@ -571,7 +523,7 @@ begin
     else
         select result/weight_count as srednia;
     end if;
-end;
+end //
 
 -- Wypisuje liste uczniow ktorych uczy zadany nauczyciel
 create procedure get_students_of_teacher(in teacherId int)
@@ -668,7 +620,7 @@ begin
     else
         select 'Uczen o zadanym ID nie istnieje' as result;
     end if;
-end;
+end //
 
 -- Procedura wyswietla plan lekcji dla zadanej klasy
 create procedure class_timetable (year int, symbol char)
@@ -824,7 +776,7 @@ begin
     from students s
     join people p on s.id = p.id
     where s.class_year = 0 and s.class_symbol = 'c';
-end;
+end //
 
 -- Wyswietla liste uczniow w klasie zadanej w argumencie
 create procedure show_class (yr int, smbl char)
@@ -843,4 +795,3 @@ begin
     declare presence int default (select count(*) from journal_presence where id_of_student = stud_id and status = 'present');
     return (presence/sum) * 100;
 end //
-
