@@ -9,7 +9,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 
 * diagram relacji (schemat bazy danych) ✅
 * skrypty SQL tworzące wszystkie obiekty bazy danych ✅
-* słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF (opis.md). ❌
+* słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF (opis.md). ✅
 
 ## Minimalne wymagania dotyczące bazy danych:
 26/24 tabele ✅
@@ -37,4 +37,3 @@ Plik z opisem powinien zawierać:
 * opis wyzwalaczy, ✅
 * skrypt tworzący bazę danych,
 * typowe zapytania.
-
