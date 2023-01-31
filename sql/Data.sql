@@ -114,10 +114,10 @@ values (1, 1, 108),
        (2, 2, 50);
 
 insert into lessons(timetable_id, lesson_date)
-values (3, '2012-12-2'),
-       (1, '2012-12-5'),
-       (1, '2012-12-7'),
-       (2, '2012-12-4');
+values (3, '2012-12-2 8:00:00'),
+       (1, '2012-12-5 9:40:00'),
+       (1, '2012-12-7 8:00:00'),
+       (2, '2023-02-01 13:30:00');
 
 insert into course_marks_categories (course_id, description, weight)
 values (1, 'sprawdzian - trygonometria', 3),

@@ -264,11 +264,12 @@ create table timetable(
 
 -- zajecia same w sobie. maja pointer na harmonogram w ktorym czasie powinny wystepowac
 create table lessons(
-    id                          int     primary key auto_increment,
-    timetable_id                int     not null,
-    lesson_date                 date    not null,
-    needs_substitution          int     default false,
-    teacher_substitution_id     int     default null,
+    id                      int primary key auto_increment,
+    timetable_id            int       not null,
+    lesson_date             timestamp not null,
+    needs_substitution      int     default false,
+    teacher_substitution_id int     default null,
+    is_in_progress          boolean default false,
 
     foreign key (timetable_id) references timetable (id)
 );
@@ -536,6 +537,17 @@ begin
     where id_of_course in (select id from courses where courses.teacher_id = teacherId);
 end //
 
+-- updatuje in progress field na zajeciach
+create procedure update_lessons_in_progress()
+begin
+    SET @lesson_length_in_minutes = 90;
+    update lessons
+    set is_in_progress = true
+    where TIME_TO_SEC(TIMEDIFF(NOW(), lesson_date)) / 60 > 0 &&
+          TIME_TO_SEC(TIMEDIFF(NOW(), lesson_date)) / 60 < @lesson_length_in_minutes;
+
+end //
+;
 /* ------ ------ ------ ------ ------ ------ functions */
 create function set_absence_to_student(lessonDate date, studentId int, wasabsent boolean)
     returns varchar(100)
