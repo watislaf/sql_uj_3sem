@@ -155,12 +155,12 @@ insert into students (id, first_parent_id, second_parent_id, class_year, class_s
 values (13, null, null, 1, 'a');
 
 insert into candidates (id, pl_exam_result, math_exam_result, science_exam_result, extracurricular_act, chosen_class_symbol, filling_date)
-values  (14, 80, 100, 90, false, 'm', '2022-08-01'),
+values  (14, 85, 57, 90, false, 'm', '2022-08-01'),
         (15, 50, 50, 50, false, 'm', '2022-08-02'),
-        (16, 100, 80, 90, false, 'm', '2022-08-02'),
-        (17, 90, 80, 100, false, 'm', '2022-08-02'),
+        (16, 10, 80, 90, false, 'm', '2022-08-02'),
+        (17, 90, 80, 20, true, 'm', '2022-08-02'),
         (18, 80, 95, 95, false, 'm', '2022-08-03'),
-        (19, 80, 95, 95, false, 'm', '2022-08-02'),
+        (19, 84, 95, 95, true, 'm', '2022-08-02'),
         (20, 10, 70, 90, true, 's', '2022-08-02'),
         (21, 60, 50, 90, false, 's', '2022-08-02');
 
@@ -205,3 +205,7 @@ insert into transactions (item_id, quantity)
 values (3, 1),
        (1, 10),
        (4, 12);
+
+insert into student_marks(mark_category, id_of_student, mark)
+values (1, 13, 4),
+       (2, 13, 4);

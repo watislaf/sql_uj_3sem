@@ -70,7 +70,7 @@ create view journal_presence as
  select presence_percentage(6);
 
 -- Wypisuje srednia ocene dla studenta x i przedmiotu y
-call get_average_mark(13, 1);
+call get_average_mark(6, 1);
 
 -- Wypisuje liste uczniow ktorych uczy zadany nauczyciel
 call get_students_of_teacher(8);
@@ -80,6 +80,10 @@ call get_parents_contact_info(6);
 
 -- Wypisuje plan lekcji klasy zadanej w argumentach
 call class_timetable(1, 'a');
+
+call show_class (1, 'a');
+
+call propose_new_classes();
 
 -- ustawia obecnosc studentowi w pewien dzien
  select set_absence_to_student('2012-12-05', 6, 1);

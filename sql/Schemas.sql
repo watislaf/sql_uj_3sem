@@ -521,16 +521,18 @@ begin
             join subjects s on s.id = c.subject_id = s.id
             where c.id = courseId;
     else
-        select result/weight_count as srednia;
+        set result = result/weight_count;
+        select result as srednia;
     end if;
 end //
 
 -- Wypisuje liste uczniow ktorych uczy zadany nauczyciel
 create procedure get_students_of_teacher(in teacherId int)
 begin
-    select distinct students.*
-    from students
-             left join students_attending_courses on students.id = students_attending_courses.id_of_student
+    select distinct p.id, p.name, p.surname, concat(s.class_year, s.class_symbol) as class
+    from students s
+    left join students_attending_courses on s.id = students_attending_courses.id_of_student
+    join people p on s.id = p.id
     where id_of_course in (select id from courses where courses.teacher_id = teacherId);
 end //
 
