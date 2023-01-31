@@ -185,7 +185,9 @@ values (1, 'drozdzowka', 10, 2.00),
        (4, 'chrupki kukurydziane', 10, 3.50),
        (5, 'paluszki', 20, 1.85),
        (6, 'chusteczki', 50, 0.50),
-       (7, 'wafle ryzowe', 20, 3.70);
+       (7, 'wafle ryzowe', 20, 3.70),
+       (8, 'baton', 6, 2.10),
+       (9, 'balon', 8, 1.50);
 
 
 insert into scholarship_details (id, name, amount, payment_frequency)

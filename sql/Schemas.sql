@@ -23,12 +23,14 @@ drop table if exists class;
 drop table if exists teachers;
 drop table if exists parents;
 drop table if exists people;
+drop table if exists orders;
+drop table if exists transactions;
 drop table if exists school_shop;
 drop table if exists scholarship_details;
 
 drop trigger if exists insert_class_courses;
 drop trigger if exists insert_students;
-drop trigger if exists insert_school_shop;
+drop trigger if exists update_school_shop;
 drop trigger if exists insert_vacations;
 drop trigger if exists update_vacations;
 drop trigger if exists insert_lesson;
@@ -50,22 +52,22 @@ drop function if exists set_new_class_preferences;
 drop function if exists presence_percentage;
 
 create table people(
-    id               int         primary key auto_increment,
-    name             varchar(32) not null,
-    surname          varchar(32) not null,
-    pesel            varchar(11) unique,
+    id               int            primary key auto_increment,
+    name             varchar(32)    not null,
+    surname          varchar(32)    not null,
+    pesel            varchar(11)    unique,
         check (pesel like '___________'), -- sprawdzenie czy pesel ma 11 cyfr
-    sex              char        not null check (sex in ('k', 'm')),
-    birthday         date        not null
+    sex              char           not null check (sex in ('k', 'm')),
+    birthday         date           not null
 );
 
 -- tabela przechowuje informacje o rodzicach uczniow
 create table parents(
-    id                 int         not null primary key,
+    id                 int              not null primary key,
     adress_street      varchar(128),
     adress_city        varchar(128),
     adress_postal_code varchar(6),
-    phone_number       varchar(9) unique,
+    phone_number       varchar(9)       unique,
     email              varchar(64),
         check (email like '%@%'),
 
@@ -73,11 +75,11 @@ create table parents(
 );
 
 create table teachers(
-    id       int       not null primary key,
+    id                 int              not null primary key,
     adress_street      varchar(128),
     adress_city        varchar(128),
     adress_postal_code varchar(6),
-    phone_number       varchar(9) unique,
+    phone_number       varchar(9)       unique,
     email              varchar(64),
         check (email like '%@%'),
     salary             decimal(10, 2),
@@ -113,12 +115,12 @@ create table students(
 
 -- tabela pzechowuje innformacje o kandydatach do szkoly
 create table candidates(
-    id                      int     not null primary key,
-    pl_exam_result          int     default 0, -- procentowy wynik egzaminu z polskiego
-    math_exam_result        int     default 0,
-    science_exam_result     int     default 0,
-    extracurricular_act     int     default false, -- czy ma jakies pozaszkolne aktywnosci - wolontariat na przyklad
-    chosen_class_symbol     char    default null,
+    id                      int         not null primary key,
+    pl_exam_result          int         default 0, -- procentowy wynik egzaminu z polskiego
+    math_exam_result        int         default 0,
+    science_exam_result     int         default 0,
+    extracurricular_act     int         default false, -- czy ma jakies pozaszkolne aktywnosci - wolontariat na przyklad
+    chosen_class_symbol     char        default null,
     filling_date            datetime,
 
     check (pl_exam_result between 0 and 100),
@@ -129,11 +131,11 @@ create table candidates(
 
 -- tabela przechowuje informacje o pracownikach takich jak: sprzataczka, wozny, sekretarka itd.
 create table administration_employees(
-    id                 int       not null primary key,
+    id                 int              not null primary key,
     adress_street      varchar(128),
     adress_city        varchar(128),
     adress_postal_code varchar(6),
-    phone_number       varchar(9) unique,
+    phone_number       varchar(9)       unique,
     salary             decimal(10, 2),
     role               varchar(128),
 
@@ -166,9 +168,9 @@ create table courses(
 );
 
 create table class_courses(
-    class_year      int not null,
-    class_symbol    char not null,
-    course_id       int not null,
+    class_year      int     not null,
+    class_symbol    char    not null,
+    course_id       int     not null,
     foreign key (class_year, class_symbol) references class(year, symbol),
     foreign key (course_id) references courses(id),
     primary key (class_year, class_symbol, course_id)
@@ -176,8 +178,8 @@ create table class_courses(
 
 -- pokazuje ktory student chodzi do jakiej grupy
 create table students_attending_courses(
-    id_of_student   int not null,
-    id_of_course    int not null,
+    id_of_student   int     not null,
+    id_of_course    int     not null,
 
     primary key (id_of_student, id_of_course),
     foreign key (id_of_student) references students (id),
@@ -185,19 +187,41 @@ create table students_attending_courses(
 );
 
 create table school_shop(
-    id          int not null,
+    id          int             not null,
     name        varchar(30),
-    quantity    int not null,
-    price       decimal(10,2) not null,
+    quantity    int             not null,
+    price       decimal(10,2)   not null,
 
     primary key (id)
 );
 
+create table orders(
+    id              int     not null auto_increment,
+    item_id         int     not null,
+    quantity        int     not null,
+    order_date      date    not null default (CURRENT_DATE),
+    price           int     not null,
+
+    primary key (id),
+    foreign key (item_id) references school_shop (id)
+);
+
+create table transactions(
+     id              int     not null auto_increment,
+     item_id         int     not null,
+     quantity        int     not null,
+     order_date      date    not null default (CURRENT_DATE),
+     price           int     not null,
+
+     primary key (id),
+     foreign key (item_id) references school_shop (id)
+)
+
 create table scholarship_details(
-    id                  int not null,
+    id                  int             not null,
     name                varchar(30),
-    amount              int not null,
-    payment_frequency   char not null,
+    amount              int             not null,
+    payment_frequency   char            not null,
 
     primary key (id),
     -- częstotliwośc wypłaty:  m - raz na miesiąc, y - raz w ciągu roku, s - raz na semestr
@@ -489,13 +513,16 @@ begin
         set msg = 'Nie mozna kupic tylu produktow';
         signal sqlstate '45000' set message_text = msg;
         set new.quantity = old.quantity;
+    else
+        insert into transactions (item_id, quantity, price)
+        values (new.id, old.quantity - new.quantity, new.price);
     end if;
 
     if new.quantity < 5 then
-        -- jeżeli jest mniej niż 5 produktów, dokup 5
-        set msg = 'Zamowiono nowe produkty';
-        signal sqlstate '45000' set message_text = msg;
-        set new.quantity = new.quantity + 5;
+        -- jeżeli jest mniej niż 5 produktów, zloz zamowienie na zakupienie do 5 nowych
+
+        insert into orders (item_id, quantity, price)
+        values (new.id, 5 - new.quantity, new.price);
     end if;
 
 end //
