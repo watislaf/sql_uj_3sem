@@ -17,7 +17,7 @@ CREATE_DUMP_SCRIPT="${CRONE_DIR}/createDumpOfDatabase.sh"
 CRONE_TAB_FILE="${CRONE_DIR}/crontab.txt"
 
 echo "*/1 * * * * bash ${UPDATE_SCRIPT}" > ${CRONE_TAB_FILE}
-echo "*/1 * * * * bash ${CREATE_DUMP_SCRIPT}" >> ${CRONE_TAB_FILE}
+echo "* */1 * * * bash ${CREATE_DUMP_SCRIPT}" >> ${CRONE_TAB_FILE}
 crontab ${CRONE_TAB_FILE}
 
 echo "mysql   -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} -e 'call ${MYSQL_DATABASE}.update_lessons_in_progress;'" > ${UPDATE_SCRIPT}
