@@ -26,15 +26,15 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * Vlad - UI ✅
 
 Plik z opisem powinien zawierać:
-```
+
 * podstawowe założenia projektu (cel, główne założenia, możliwości, ograniczenia przyjęte przy projektowaniu),
-* diagram ER,
-* schemat bazy danych (diagram relacji),
+* diagram ER, ✅
+* schemat bazy danych (diagram relacji), ✅
 * dodatkowe wiezy integralności danych (nie zapisane w schemacie),
-* utworzone indeksy,
-* opis stworzonych widoków,
-* opis procedur składowanych,
-* opis wyzwalaczy,
+* utworzone indeksy, 
+* opis stworzonych widoków, ✅
+* opis procedur składowanych, ✅
+* opis wyzwalaczy, ✅
 * skrypt tworzący bazę danych,
 * typowe zapytania.
-``` 
+
