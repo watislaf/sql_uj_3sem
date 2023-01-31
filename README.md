@@ -20,9 +20,9 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 
 8/5 wyzwalaczy ✅
 
-* Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ❌
+* Vlad - baza powinna zawierać dane dotyczące atrybutów, których wartość zmienia się w czasie ✅
 * Marcin - baza powinna zawierać tabele realizujące jeden ze schematów dziedziczenia ✅
-* Michal - należy zaprojektować strategii pielęgnacji bazy danych (kopie zapasowe) ❌
+* Michal - należy zaprojektować strategii pielęgnacji bazy danych (kopie zapasowe) ✅
 * Vlad - UI ✅
 
 Plik z opisem powinien zawierać:

@@ -269,7 +269,7 @@ create table lessons(
     lesson_date             timestamp not null,
     needs_substitution      int     default false,
     teacher_substitution_id int     default null,
-    is_in_progress          boolean default null,
+    is_in_progress          boolean default false,
 
     foreign key (timetable_id) references timetable (id)
 );
@@ -547,9 +547,7 @@ begin
           TIME_TO_SEC(TIMEDIFF(NOW(), lesson_date)) / 60 < @lesson_length_in_minutes;
 
 end //
-
-SELEct * from lessons;
-
+;
 /* ------ ------ ------ ------ ------ ------ functions */
 create function set_absence_to_student(lessonDate date, studentId int, wasabsent boolean)
     returns varchar(100)
