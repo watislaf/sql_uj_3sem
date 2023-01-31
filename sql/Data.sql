@@ -178,17 +178,18 @@ values (8, '2022-12-31', null);
 # set lesson_date = '2022-12-31'
 # where lesson_date = '2023-04-01';
 
-insert into school_shop (id, name, quantity, price)
-values (1, 'drozdzowka', 10, 2.00),
-       (2, 'pizzerinka', 15, 2.50),
-       (3, 'woda', 10, 2.00),
-       (4, 'chrupki kukurydziane', 10, 3.50),
-       (5, 'paluszki', 20, 1.85),
-       (6, 'chusteczki', 50, 0.50),
-       (7, 'wafle ryzowe', 20, 3.70),
-       (8, 'baton', 6, 2.10),
-       (9, 'balon', 8, 1.50);
+insert into product_category (id, name, profit_margin)
+values (1, 'napoje', 10),
+       (2, 'przekaski', 25),
+       (3, 'inne', 30);
 
+insert into school_shop (name, category, quantity, bulk_price)
+values ('drozdzowka', 2, 30, 2.00),
+       ('pizzerka', 2, 10, 3.50),
+       ('woda', 1, 40, 1.50),
+       ('chrupki kukurydziane', 2, 15, 4.00),
+       ('sok jablkowy', 1, 10, 3.00),
+       ('chusteczki', 3, 25, 1.80);
 
 insert into scholarship_details (id, name, amount, payment_frequency)
 values (1, 'Stypendium starosty', 150, 'm'),
@@ -199,3 +200,8 @@ insert into scholarship_grants (id_of_student, id_of_scholarship)
 values (6, 1),
        (7, 1),
        (7, 2);
+
+insert into transactions (item_id, quantity)
+values (3, 1),
+       (1, 10),
+       (4, 12);

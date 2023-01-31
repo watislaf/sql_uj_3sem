@@ -12,7 +12,7 @@ uczniach i ich stopniach oraz klasach i lekcjach.
 * słowny opis projektu (cel, możliwości, główne założenia). Format opisu: plik PDF lub RTF (opis.md). ❌
 
 ## Minimalne wymagania dotyczące bazy danych:
-23/24 tabele ❌
+26/24 tabele ✅
 
 11/10 widoków lub funkcji ✅
 

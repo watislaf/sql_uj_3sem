@@ -27,10 +27,11 @@ drop table if exists orders;
 drop table if exists transactions;
 drop table if exists school_shop;
 drop table if exists scholarship_details;
+drop table if exists product_category;
 
 drop trigger if exists insert_class_courses;
 drop trigger if exists insert_students;
-drop trigger if exists update_school_shop;
+drop trigger if exists insert_transaction;
 drop trigger if exists insert_vacations;
 drop trigger if exists update_vacations;
 drop trigger if exists insert_lesson;
@@ -186,36 +187,44 @@ create table students_attending_courses(
     foreign key (id_of_course) references courses (id)
 );
 
-create table school_shop(
-    id          int             not null,
-    name        varchar(30),
-    quantity    int             not null,
-    price       decimal(10,2)   not null,
+create table product_category(
+    id                  int             primary key,
+    name                varchar(32)     not null,
+    profit_margin       int             not null
+);
 
-    primary key (id)
+create table school_shop(
+    id              int             not null auto_increment,
+    name            varchar(32),
+    category        int             not null,
+    quantity        int             not null,
+    bulk_price      decimal(10,2)   not null,
+
+    primary key (id),
+    foreign key (category) references product_category(id)
 );
 
 create table orders(
-    id              int     not null auto_increment,
-    item_id         int     not null,
-    quantity        int     not null,
-    order_date      date    not null default (CURRENT_DATE),
-    price           int     not null,
+    id              int                 not null auto_increment,
+    item_id         int                 not null,
+    quantity        int                 not null,
+    order_date      date                not null default (CURRENT_DATE),
+    price           decimal(10,2)       not null,
 
     primary key (id),
     foreign key (item_id) references school_shop (id)
 );
 
 create table transactions(
-     id              int     not null auto_increment,
-     item_id         int     not null,
-     quantity        int     not null,
-     order_date      date    not null default (CURRENT_DATE),
-     price           int     not null,
+     id              int                not null auto_increment,
+     item_id         int                not null,
+     quantity        int                not null,
+     order_date      date               not null default (CURRENT_DATE),
+     price           decimal(10,2),
 
      primary key (id),
      foreign key (item_id) references school_shop (id)
-)
+);
 
 create table scholarship_details(
     id                  int             not null,
@@ -501,30 +510,32 @@ begin
     end if;
 end //
 
-create trigger update_school_shop
-    before update
-    on school_shop
+create trigger insert_transaction
+    before insert
+    on transactions
     for each row
-
 begin
+    declare prod_quantity int default (select quantity from school_shop ss where ss.id = new.item_id);
     declare msg varchar(255);
 
-    if new.quantity < 0 then
+    if new.price is null then
+        set new.price = new.quantity * (select bulk_price from school_shop ss where ss.id = new.item_id) * (1 + 0.01 *(select profit_margin from product_category pc where pc.id = (select category from school_shop ss where ss.id = new.item_id)));
+    end if;
+
+    if prod_quantity < new.quantity then
         set msg = 'Nie mozna kupic tylu produktow';
         signal sqlstate '45000' set message_text = msg;
-        set new.quantity = old.quantity;
+        set new.item_id = null; -- rollback
     else
-        insert into transactions (item_id, quantity, price)
-        values (new.id, old.quantity - new.quantity, new.price);
+        update school_shop ss
+            set ss.quantity = prod_quantity - new.quantity
+        where ss.id = new.item_id;
+
+        if prod_quantity - new.quantity < 5 and (select count(*) from orders o where o.item_id = new.item_id) = 0 then
+            insert into orders (item_id, quantity, price)
+            values (new.item_id, 30, (select bulk_price from school_shop ss where ss.id = new.item_id));
+        end if;
     end if;
-
-    if new.quantity < 5 then
-        -- jeżeli jest mniej niż 5 produktów, zloz zamowienie na zakupienie do 5 nowych
-
-        insert into orders (item_id, quantity, price)
-        values (new.id, 5 - new.quantity, new.price);
-    end if;
-
 end //
 
 DELIMITER //
@@ -701,30 +712,30 @@ create function set_new_class_preferences (m_full int, p_full int, s_full int, p
 begin
     case pref
         when 'm' then
-            if (!m_full) then
+            if (not m_full) then
                 return 'm';
             else
-                if (!s_full) then
+                if (not s_full) then
                     return 's';
                 else
                     return 'p';
                 end if;
             end if;
         when 'p' then
-            if (!p_full) then
+            if (not p_full) then
                 return 'p';
             else
-                if (!s_full) then
+                if (not s_full) then
                     return 's';
                 else
                     return 'm';
                 end if;
             end if;
         when 's' then
-            if (!s_full) then
+            if (not s_full) then
                 return 's';
             else
-                if (!m_full) then
+                if (not m_full) then
                     return 'm';
                 else
                     return 'p';
