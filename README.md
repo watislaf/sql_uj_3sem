@@ -1,5 +1,7 @@
 # sql_uj_3sem
 
+![Screen_Recording_2023-02-01_at_21_05_11_AdobeExpress](https://user-images.githubusercontent.com/45079123/216152697-1cb39c4f-9335-42e2-b602-b8c8a395235a.gif)
+
 http://34.125.149.136/
 
 ## Zadanie
