@@ -1,5 +1,7 @@
 # sql_uj_3sem
 
+http://34.125.149.136/
+
 ## Zadanie
 
 Baza danych szkoly. Baza powinna przechowywac informacje o przedmiotach, nauczycielach,
@@ -30,10 +32,10 @@ Plik z opisem powinien zawierać:
 * podstawowe założenia projektu (cel, główne założenia, możliwości, ograniczenia przyjęte przy projektowaniu),
 * diagram ER, ✅
 * schemat bazy danych (diagram relacji), ✅
-* dodatkowe wiezy integralności danych (nie zapisane w schemacie),
-* utworzone indeksy, 
+* dodatkowe wiezy integralności danych (nie zapisane w schemacie), ✅
+* utworzone indeksy, ✅ :) 
 * opis stworzonych widoków, ✅
 * opis procedur składowanych, ✅
 * opis wyzwalaczy, ✅
-* skrypt tworzący bazę danych,
-* typowe zapytania.
+* skrypt tworzący bazę danych,❓ (mamy pliki z tym, więc nie wiem po co to w opisie)
+* typowe zapytania. ✅
